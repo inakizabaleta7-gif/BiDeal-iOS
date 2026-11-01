@@ -4,6 +4,8 @@ import SwiftUI
 @MainActor
 public final class ComerciosViewModel: ObservableObject {
     @Published public var recompensas: [RecompensaUiModel] = []
+    @Published public var comercios: [Comercio] = []
+    @Published public var comercioSeleccionado: Comercio? = nil
     @Published public var categoriaSeleccionada: String = "Todos"
     @Published public var textoBusqueda: String = ""
     @Published public var estaCargando: Bool = false
@@ -17,10 +19,18 @@ public final class ComerciosViewModel: ObservableObject {
     
     public let categorias = ["Todos", "Deportes", "Taller", "Moda Sostenible", "Restauración"]
     
+    public var comerciosFiltrados: [Comercio] {
+        return comercios
+    }
+    
     public init() {
         Task {
             await cargarRecompensas()
         }
+    }
+    
+    public func cargarComerciosYDescuentos() async {
+        await cargarRecompensas()
     }
     
     public func cargarRecompensas() async {
@@ -96,28 +106,37 @@ public final class ComerciosViewModel: ObservableObject {
         }
     }
     
+    public func canjear(recompensa: RecompensaUiModel, usuarioId: String) async -> RespuestaCanje {
+        canjeando = true
+        errorCanje = nil
+        do {
+            let codigo = try await SupabaseService.shared.canjearRecompensa(
+                userId: usuarioId,
+                descuentoId: recompensa.id,
+                comercioId: recompensa.comercioId,
+                precioKmCoins: recompensa.precio
+            )
+            self.codigoCanjeGenerado = codigo
+            self.canjeando = false
+            return RespuestaCanje(exito: true, codigoCanje: codigo, mensaje: "Canje completado con éxito")
+        } catch {
+            self.canjeando = false
+            self.errorCanje = error.localizedDescription
+            return RespuestaCanje(exito: false, codigoCanje: "", mensaje: error.localizedDescription)
+        }
+    }
+    
     public func canjear(recompensa: RecompensaUiModel, userId: String, saldoActual: Int) async -> Bool {
         guard saldoActual >= recompensa.precio else {
             errorCanje = "No tienes suficientes KmCoins (KMC). Saldo actual: \(saldoActual) KMC."
             return false
         }
         
-        canjeando = true
-        errorCanje = nil
-        do {
-            let codigo = try await SupabaseService.shared.canjearRecompensa(
-                userId: userId,
-                descuentoId: recompensa.id,
-                comercioId: recompensa.comercioId,
-                precioKmCoins: recompensa.precio
-            )
-            self.codigoCanjeGenerado = codigo
+        let res = await canjear(recompensa: recompensa, usuarioId: userId)
+        if res.exito {
             self.mostrarDialogoCanje = true
-            self.canjeando = false
             return true
-        } catch {
-            self.canjeando = false
-            self.errorCanje = "Error al procesar el canje en la tienda. Inténtalo de nuevo."
+        } else {
             return false
         }
     }

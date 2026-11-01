@@ -42,6 +42,10 @@ public struct RecompensaUiModel: Identifiable, Codable {
     public let longitud: Double?
     public let logoUrl: String?
     
+    public var imagenUrl: String? {
+        return logoUrl
+    }
+    
     public init(
         id: Int,
         comercioId: Int,
@@ -66,5 +70,17 @@ public struct RecompensaUiModel: Identifiable, Codable {
         self.latitud = latitud
         self.longitud = longitud
         self.logoUrl = logoUrl
+    }
+}
+
+public struct RespuestaCanje: Codable {
+    public let exito: Bool
+    public let codigoCanje: String
+    public let mensaje: String
+    
+    public init(exito: Bool, codigoCanje: String, mensaje: String) {
+        self.exito = exito
+        self.codigoCanje = codigoCanje
+        self.mensaje = mensaje
     }
 }

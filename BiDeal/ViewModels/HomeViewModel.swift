@@ -20,12 +20,16 @@ public struct MisionUiModel: Identifiable {
 
 @MainActor
 public final class HomeViewModel: ObservableObject {
+    @Published public var usuario: Usuario = Usuario.mock
     @Published public var kmHoy: Double = 0.0
     @Published public var distanciaTotal: Double = 0.0
     @Published public var co2Evitado: Double = 0.0
     @Published public var rachaSemanas: Int = 1
     @Published public var proximaCaducidad: String? = nil
     @Published public var estaCargando: Bool = false
+    
+    public var distanciaTotalKm: Double { distanciaTotal }
+    public var co2TotalEvitadoKg: Double { co2Evitado }
     
     // Lista de misiones diarias (igual a Android)
     public var misionesDiarias: [MisionUiModel] {
@@ -53,23 +57,29 @@ public final class HomeViewModel: ObservableObject {
     }
     
     public func sincronizarHealthKitAutomatico() {
-        HealthKitManager.shared.requestAuthorization { granted, error in
-            if granted {
-                HealthKitManager.shared.fetchDistanciaHoy { km in
-                    DispatchQueue.main.async {
-                        if km > self.kmHoy {
-                            self.kmHoy = km
-                            self.distanciaTotal += km
-                            self.co2Evitado = self.distanciaTotal * 0.142
-                        }
-                    }
+        Task {
+            let auth = await HealthKitManager.shared.solicitarPermisos()
+            if auth {
+                await HealthKitManager.shared.leerKmSemanaYHoy()
+                let km = HealthKitManager.shared.kmHoy
+                if km > self.kmHoy {
+                    self.kmHoy = km
+                    self.distanciaTotal += km
+                    self.co2Evitado = self.distanciaTotal * 0.142
+                    self.usuario.km_hoy = km
+                    self.usuario.distancia_total_km = self.distanciaTotal
                 }
             }
         }
     }
     
+    public func cargarDatosSupabase() async {
+        estaCargando = false
+    }
+    
     public func actualizarConUsuario(_ user: Usuario?) {
         guard let u = user else { return }
+        self.usuario = u
         if u.km_hoy > self.kmHoy {
             self.kmHoy = u.km_hoy
         }

@@ -45,7 +45,7 @@ struct BiDealApp: App {
             if let codigoLimpio = (codigoQuery ?? codigoPath)?.trimmingCharacters(in: .whitespacesAndNewlines).uppercased(),
                !codigoLimpio.isEmpty {
                 Task {
-                    let userId = authVM.currentUser?.id ?? homeVM.usuario.id
+                    let userId = authVM.currentUser?.id ?? "local-user"
                     let _ = await estadisticasVM.unirseAGrupo(userId: userId, codigo: codigoLimpio)
                 }
             }
