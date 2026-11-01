@@ -105,3 +105,27 @@ public struct Usuario: Identifiable, Codable {
         self.creado_en = try container.decodeIfPresent(String.self, forKey: .creado_en)
     }
 }
+
+extension Usuario {
+    public static let mock = Usuario(
+        id: "mock-user-1",
+        email: "ciclista@bideal.org",
+        nombre: "Ciclista",
+        apellidos: "",
+        genero: "Otro",
+        telefono: "",
+        ciudad: "Pamplona",
+        notificaciones: true,
+        distancia_total_km: 0.0,
+        co2_total_evitado_kg: 0.0,
+        km_hoy: 0.0,
+        km_semana: 0.0,
+        racha_oro_semanal: 1,
+        codigo_referido: "BIDEAL",
+        referido_por: nil,
+        plataforma: "ios",
+        kmcoins_balance: 0,
+        creado_en: nil
+    )
+}
+
