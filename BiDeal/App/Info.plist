@@ -26,6 +26,21 @@
 	<string>BiDeal registra tus kilómetros pedaleados en segundo plano mientras tienes el móvil guardado en el bolsillo para que no pierdas ninguna recompensa.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>BiDeal necesita acceder a tu cámara para escanear el código QR en el mostrador del comercio y aplicar tu descuento al instante.</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>BiDeal sincroniza tus rutas ciclistas de Apple Health y Strava para sumarlas a tu cuenta de KmCoins y al ranking de la Liga Ciclista.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>BiDeal puede registrar tus rutas ciclistas en Apple Health para completar tus anillos de actividad diaria.</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.bideal.pamplona</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>bideal</string>
+			</array>
+		</dict>
+	</array>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>location</string>

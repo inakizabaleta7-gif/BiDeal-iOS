@@ -2,9 +2,17 @@ import SwiftUI
 
 public struct TarjetaLigaAmigosView: View {
     @EnvironmentObject var estadisticasVM: EstadisticasViewModel
-    @State private var copiado: Bool = false
+    @EnvironmentObject var homeVM: HomeViewModel
     
-    var body: some View {
+    @State private var copiadoEnlace: Bool = false
+    @State private var copiadoCodigo: Bool = false
+    @State private var mostrarModalCanje: Bool = false
+    @State private var inputCodigoCanje: String = ""
+    @State private var uniendoAGrupo: Bool = false
+    
+    public init() {}
+    
+    public var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             // Cabecera: Título, Miembros y Bote
             HStack(alignment: .center) {
@@ -12,18 +20,19 @@ public struct TarjetaLigaAmigosView: View {
                     ZStack {
                         Circle()
                             .fill(BiDealTheme.goldLight)
-                            .frame(width: 42, height: 42)
-                        Image(systemName: "trophy.fill")
-                            .foregroundColor(BiDealTheme.accentGold)
-                            .font(.title3)
+                            .frame(width: 44, height: 44)
+                        Text("🏆")
+                            .font(.title2)
                     }
                     
                     VStack(alignment: .leading, spacing: 2) {
+                        Text(estadisticasVM.nombreGrupo)
+                            .font(.headline)
+                            .fontWeight(.heavy)
+                            .foregroundColor(.primary)
+                        
                         HStack(spacing: 6) {
-                            Text("Liga de Amigos")
-                                .font(.headline)
-                                .fontWeight(.bold)
-                            Text("\(estadisticasVM.numAmigosSimulados) / \(estadisticasVM.maximoGrupo) miembros")
+                            Text("\(estadisticasVM.totalMiembros) / \(estadisticasVM.maximoGrupo) ciclistas")
                                 .font(.caption2)
                                 .fontWeight(.bold)
                                 .foregroundColor(.secondary)
@@ -31,10 +40,11 @@ public struct TarjetaLigaAmigosView: View {
                                 .padding(.vertical, 2)
                                 .background(Color.bidealBackground)
                                 .cornerRadius(6)
+                            
+                            Text(estadisticasVM.totalMiembros > 1 ? "Compitiendo esta semana" : "Grupo en formación")
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
                         }
-                        Text(estadisticasVM.numAmigosSimulados == 2 ? "Compitiendo tú y tu amigo" : "Grupeta ciclista semanal")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
                     }
                 }
                 
@@ -42,9 +52,9 @@ public struct TarjetaLigaAmigosView: View {
                 
                 // Badge de Bote Semanal
                 HStack(spacing: 4) {
-                    Image(systemName: "star.fill")
+                    Text("⭐")
                         .font(.caption2)
-                    Text("+25 KMC")
+                    Text("+\(estadisticasVM.boteKmCoins) KMC")
                         .font(.caption)
                         .fontWeight(.heavy)
                 }
@@ -62,16 +72,18 @@ public struct TarjetaLigaAmigosView: View {
                         Image(systemName: "lock.fill")
                             .foregroundColor(BiDealTheme.accentGold)
                             .font(.caption)
-                        Text("Ranking activo · Premios en espera (\(estadisticasVM.numAmigosSimulados)/\(estadisticasVM.minimoParaPremios))")
+                        Text("Ranking activo · Premios en espera (\(estadisticasVM.totalMiembros)/\(estadisticasVM.minimoParaPremios) miembros)")
                             .font(.caption)
                             .fontWeight(.bold)
                             .foregroundColor(BiDealTheme.accentGold)
                     }
-                    Text("Ya podéis ver vuestros km y competir. Faltan \(estadisticasVM.minimoParaPremios - estadisticasVM.numAmigosSimulados) amigos para activar los premios (+25 KMC al 1º y +10 KMC si llegáis a 200 km grupal).")
+                    Text(estadisticasVM.totalMiembros == 1 ?
+                         "¡Ya sumas tus km! Invita a 3 amigos ciclistas con tu enlace para desbloquear el reparto de premios dominical: +\(estadisticasVM.boteKmCoins) KMC al #1 y +\(estadisticasVM.premioMetaKmCoins) KMC para todos si superáis los \(Int(estadisticasVM.metaKmGrupal)) km." :
+                         "Ya sois \(estadisticasVM.totalMiembros) en el grupo. ¡Faltan \(estadisticasVM.minimoParaPremios - estadisticasVM.totalMiembros) ciclistas para activar el bote del domingo!")
                         .font(.caption2)
                         .foregroundColor(.secondary)
                     
-                    ProgressView(value: Double(estadisticasVM.numAmigosSimulados), total: Double(estadisticasVM.minimoParaPremios))
+                    ProgressView(value: Double(estadisticasVM.totalMiembros), total: Double(estadisticasVM.minimoParaPremios))
                         .tint(BiDealTheme.accentGold)
                 }
                 .padding(12)
@@ -82,11 +94,11 @@ public struct TarjetaLigaAmigosView: View {
                     Image(systemName: "flame.fill")
                         .foregroundColor(BiDealTheme.primary)
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("🔥 ¡Premios de Liga Desbloqueados!")
+                        Text("🔥 ¡Premios de Liga Activados!")
                             .font(.caption)
                             .fontWeight(.bold)
                             .foregroundColor(BiDealTheme.primaryDark)
-                        Text("• 1º clasificado: +25 KMC el domingo 23:59 · Meta cooperativa: +10 KMC para TODOS si sumáis 200 km.")
+                        Text("• Ganador semanal (#1): +\(estadisticasVM.boteKmCoins) KmCoins el domingo 23:59.\n• Meta de grupo: +\(estadisticasVM.premioMetaKmCoins) KmCoins para TODOS si sumáis \(Int(estadisticasVM.metaKmGrupal)) km.")
                             .font(.caption2)
                             .foregroundColor(BiDealTheme.primaryDark)
                     }
@@ -96,14 +108,14 @@ public struct TarjetaLigaAmigosView: View {
                 .cornerRadius(10)
             }
             
-            // Meta Cooperativa de Grupeta (200 km en equipo)
+            // Meta Cooperativa de Grupo (200 km)
             VStack(alignment: .leading, spacing: 6) {
                 HStack {
-                    Text("🤝 Meta de Equipo (200 km)")
+                    Text("🤝 Meta de Equipo (\(Int(estadisticasVM.metaKmGrupal)) km)")
                         .font(.caption)
                         .fontWeight(.bold)
                     Spacer()
-                    Text(estadisticasVM.metaGrupalAlcanzada ? "¡CONSEGUIDO! +10 KMC c/u" : "+10 KMC para todos")
+                    Text(estadisticasVM.metaGrupalAlcanzada ? "¡CONSEGUIDO! +\(estadisticasVM.premioMetaKmCoins) KMC c/u" : "+\(estadisticasVM.premioMetaKmCoins) KMC para todos")
                         .font(.caption2)
                         .fontWeight(.heavy)
                         .padding(.horizontal, 6)
@@ -114,7 +126,7 @@ public struct TarjetaLigaAmigosView: View {
                 }
                 
                 HStack {
-                    Text(String(format: "%.1f / 200 km acumulados", estadisticasVM.kmTotalesGrupeta))
+                    Text(String(format: "%.1f / %.0f km acumulados", estadisticasVM.kmTotalesGrupo, estadisticasVM.metaKmGrupal))
                         .font(.caption2)
                         .foregroundColor(.secondary)
                     Spacer()
@@ -126,6 +138,12 @@ public struct TarjetaLigaAmigosView: View {
                 
                 ProgressView(value: estadisticasVM.porcentajeMetaGrupal)
                     .tint(estadisticasVM.metaGrupalAlcanzada ? Color.green : BiDealTheme.primary)
+                
+                Text(estadisticasVM.metaGrupalAlcanzada ?
+                     "¡Meta superada! Todo el grupo sumará +\(estadisticasVM.premioMetaKmCoins) KmCoins este domingo por pedalear más de \(Int(estadisticasVM.metaKmGrupal)) km." :
+                     "Cada kilómetro que pedalees tú o tus compañeros de grupo suma para el reto común de \(Int(estadisticasVM.metaKmGrupal)) km.")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
             }
             .padding(12)
             .background(Color.bidealBackground)
@@ -143,129 +161,168 @@ public struct TarjetaLigaAmigosView: View {
                         .foregroundColor(.secondary)
                 }
                 
-                VStack(spacing: 6) {
-                    ForEach(Array(estadisticasVM.miembrosLiga.enumerated()), id: \.offset) { index, miembro in
-                        let esLider = index == 0
-                        HStack(spacing: 10) {
-                            Text(esLider ? "👑" : "\(index + 1).")
+                if estadisticasVM.miembrosGrupo.isEmpty {
+                    // Tarjeta de único miembro
+                    HStack(spacing: 10) {
+                        Text("👑")
+                            .font(.headline)
+                        Circle()
+                            .fill(BiDealTheme.primary)
+                            .frame(width: 32, height: 32)
+                            .overlay(Text("T").font(.caption).bold().foregroundColor(.white))
+                        VStack(alignment: .leading, spacing: 1) {
+                            Text("Tú (\(homeVM.usuario.nombre ?? "Ciclista"))")
                                 .font(.caption)
                                 .fontWeight(.bold)
-                                .foregroundColor(esLider ? BiDealTheme.accentGold : .secondary)
-                                .frame(width: 20)
-                            
-                            Circle()
-                                .fill(miembro.esUsuario ? BiDealTheme.primary : Color.gray.opacity(0.3))
-                                .frame(width: 28, height: 28)
-                                .overlay(
-                                    Text(String(miembro.nombre.prefix(1)))
-                                        .font(.caption2)
-                                        .fontWeight(.bold)
-                                        .foregroundColor(miembro.esUsuario ? .white : .primary)
-                                )
-                            
-                            VStack(alignment: .leading, spacing: 1) {
-                                HStack(spacing: 4) {
-                                    Text(miembro.nombre)
-                                        .font(.caption)
-                                        .fontWeight(miembro.esUsuario ? .bold : .medium)
-                                    if miembro.esUsuario {
-                                        Text("TÚ")
-                                            .font(.system(size: 8, weight: .heavy))
-                                            .padding(.horizontal, 4)
-                                            .padding(.vertical, 1)
-                                            .background(BiDealTheme.primaryLight)
-                                            .foregroundColor(BiDealTheme.primaryDark)
-                                            .cornerRadius(4)
+                            Text("¡Encabezas tu grupo! Invita amigos para competir.")
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                        }
+                        Spacer()
+                        Text(String(format: "%.1f km", homeVM.usuario.km_semana))
+                            .font(.caption)
+                            .bold()
+                            .foregroundColor(BiDealTheme.primary)
+                    }
+                    .padding(10)
+                    .background(BiDealTheme.primaryLight.opacity(0.4))
+                    .cornerRadius(10)
+                } else {
+                    VStack(spacing: 6) {
+                        ForEach(Array(estadisticasVM.miembrosGrupo.enumerated()), id: \.element.id) { index, miembro in
+                            let posicion = index + 1
+                            let esLider = posicion == 1
+                            HStack(spacing: 10) {
+                                Text(posicion == 1 ? "👑" : (posicion == 2 ? "🥈" : (posicion == 3 ? "🥉" : "\(posicion).")))
+                                    .font(.caption)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(esLider ? BiDealTheme.accentGold : .secondary)
+                                    .frame(width: 22)
+                                
+                                Circle()
+                                    .fill(miembro.es_usuario ? BiDealTheme.primary : Color.gray.opacity(0.3))
+                                    .frame(width: 28, height: 28)
+                                    .overlay(
+                                        Text(String(miembro.nombre.prefix(1)).uppercased())
+                                            .font(.caption2)
+                                            .fontWeight(.bold)
+                                            .foregroundColor(miembro.es_usuario ? .white : .primary)
+                                    )
+                                
+                                VStack(alignment: .leading, spacing: 1) {
+                                    HStack(spacing: 4) {
+                                        Text(miembro.es_usuario ? "Tú (\(miembro.nombre))" : miembro.nombre)
+                                            .font(.caption)
+                                            .fontWeight(miembro.es_usuario ? .bold : .medium)
+                                        if miembro.es_usuario {
+                                            Text("TÚ")
+                                                .font(.system(size: 8, weight: .heavy))
+                                                .padding(.horizontal, 4)
+                                                .padding(.vertical, 1)
+                                                .background(BiDealTheme.primaryLight)
+                                                .foregroundColor(BiDealTheme.primaryDark)
+                                                .cornerRadius(4)
+                                        }
+                                    }
+                                    if esLider && estadisticasVM.premiosDesbloqueados {
+                                        Text("Líder provisional · +\(estadisticasVM.boteKmCoins) KMC")
+                                            .font(.system(size: 9))
+                                            .foregroundColor(BiDealTheme.accentGold)
                                     }
                                 }
-                                if esLider && estadisticasVM.premiosDesbloqueados {
-                                    Text("Líder provisional · +25 KMC")
-                                        .font(.system(size: 9))
-                                        .foregroundColor(BiDealTheme.accentGold)
-                                }
+                                
+                                Spacer()
+                                
+                                Text(String(format: "%.1f km", miembro.km_semana))
+                                    .font(.caption)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(esLider ? BiDealTheme.primary : .primary)
                             }
-                            
-                            Spacer()
-                            
-                            Text(String(format: "%.1f km", miembro.kmSemana))
-                                .font(.caption)
-                                .fontWeight(.bold)
-                                .foregroundColor(esLider ? BiDealTheme.primary : .primary)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 6)
+                            .background(miembro.es_usuario ? BiDealTheme.primaryLight.opacity(0.4) : Color.clear)
+                            .cornerRadius(8)
                         }
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 6)
-                        .background(miembro.esUsuario ? BiDealTheme.primaryLight.opacity(0.4) : Color.clear)
+                    }
+                }
+            }
+            
+            // Enlace directo de 1-clic y código
+            VStack(alignment: .leading, spacing: 6) {
+                Text("Enlace directo de 1 clic (sin teclear códigos):")
+                    .font(.caption2)
+                    .fontWeight(.bold)
+                    .foregroundColor(.secondary)
+                
+                Text(estadisticasVM.enlaceDirectoGrupo)
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .foregroundColor(BiDealTheme.primary)
+                    .lineLimit(1)
+                
+                HStack(spacing: 8) {
+                    Button(action: {
+                        UIPasteboard.general.string = estadisticasVM.enlaceDirectoGrupo
+                        copiadoEnlace = true
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) { copiadoEnlace = false }
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: copiadoEnlace ? "checkmark" : "link")
+                            Text(copiadoEnlace ? "¡Enlace copiado!" : "Copiar Enlace")
+                        }
+                        .font(.caption)
+                        .fontWeight(.bold)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 8)
+                        .background(Color.bidealBackground)
+                        .cornerRadius(8)
+                    }
+                    
+                    Button(action: {
+                        UIPasteboard.general.string = estadisticasVM.codigoEfectivo
+                        copiadoCodigo = true
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) { copiadoCodigo = false }
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: copiadoCodigo ? "checkmark" : "doc.on.doc")
+                            Text(copiadoCodigo ? "¡Código copiado!" : "Copiar Código")
+                        }
+                        .font(.caption)
+                        .fontWeight(.bold)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 8)
+                        .background(Color.bidealBackground)
                         .cornerRadius(8)
                     }
                 }
             }
-            
-            // Código de Grupo y Copiar
-            HStack {
-                VStack(alignment: .leading, spacing: 1) {
-                    Text("Tu código de grupo:")
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
-                    Text(estadisticasVM.codigoGrupo)
-                        .font(.headline)
-                        .fontWeight(.heavy)
-                        .fontDesign(.monospaced)
-                        .foregroundColor(BiDealTheme.primary)
-                }
-                Spacer()
-                Button(action: {
-                    UIPasteboard.general.string = estadisticasVM.codigoGrupo
-                    copiado = true
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                        copiado = false
-                    }
-                }) {
-                    HStack(spacing: 4) {
-                        Image(systemName: copiado ? "checkmark" : "doc.on.doc")
-                        Text(copiado ? "¡Copiado!" : "Copiar")
-                    }
-                    .font(.caption)
-                    .fontWeight(.bold)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(Color.bidealBackground)
-                    .cornerRadius(8)
-                }
-            }
             .padding(12)
-            .background(Color.bidealBackground.opacity(0.6))
+            .background(Color.bidealBackground.opacity(0.7))
             .cornerRadius(12)
             
-            // Botón Compartir por WhatsApp
-            Button(action: compartirGrupeta) {
-                HStack {
-                    Image(systemName: "square.and.arrow.up")
-                    Text("Invitar Amigos por WhatsApp")
-                        .fontWeight(.bold)
+            // Botón Compartir por WhatsApp con Enlace Directo
+            Button(action: compartirWhatsApp) {
+                HStack(spacing: 8) {
+                    Image(systemName: "paperplane.fill")
+                    Text("Invitar al Grupo por WhatsApp")
+                        .fontWeight(.heavy)
                 }
+                .font(.subheadline)
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 12)
+                .padding(.vertical, 14)
                 .background(BiDealTheme.primary)
                 .foregroundColor(.white)
-                .cornerRadius(12)
+                .cornerRadius(14)
+                .shadow(color: BiDealTheme.primary.opacity(0.3), radius: 6, y: 3)
             }
             
-            // Selector de Prueba (Simulador 2, 3, 5 y 8 miembros)
-            HStack(spacing: 6) {
-                Text("Probar vista:")
-                    .font(.caption2)
-                    .foregroundColor(.secondary)
-                ForEach([2, 3, 5, 8], id: \.self) { cant in
-                    Button(action: { estadisticasVM.numAmigosSimulados = cant }) {
-                        Text(cant == 2 ? "2 (Tú + amigo)" : "\(cant) amigos")
-                            .font(.system(size: 10, weight: estadisticasVM.numAmigosSimulados == cant ? .bold : .regular))
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 4)
-                            .background(estadisticasVM.numAmigosSimulados == cant ? BiDealTheme.primary : Color.bidealBackground)
-                            .foregroundColor(estadisticasVM.numAmigosSimulados == cant ? .white : .primary)
-                            .cornerRadius(6)
-                    }
-                }
+            // Enlace para canjear código manualmente si lo desea
+            Button(action: { mostrarModalCanje = true }) {
+                Text("¿Tienes el enlace o código de un amigo? Canjearlo aquí")
+                    .font(.caption)
+                    .fontWeight(.bold)
+                    .foregroundColor(BiDealTheme.primary)
+                    .frame(maxWidth: .infinity)
             }
         }
         .padding(18)
@@ -275,15 +332,99 @@ public struct TarjetaLigaAmigosView: View {
             RoundedRectangle(cornerRadius: 20)
                 .stroke(Color.bidealBorder, lineWidth: 1)
         )
+        .sheet(isPresented: $mostrarModalCanje) {
+            ModalCanjeCodigoGrupo(
+                inputCodigo: $inputCodigoCanje,
+                uniendo: $uniendoAGrupo,
+                onUnirse: {
+                    Task {
+                        uniendoAGrupo = true
+                        let _ = await estadisticasVM.unirseAGrupo(userId: homeVM.usuario.id, codigo: inputCodigoCanje)
+                        uniendoAGrupo = false
+                        mostrarModalCanje = false
+                    }
+                }
+            )
+        }
     }
     
-    private func compartirGrupeta() {
-        let texto = "¡Únete a mi grupeta ciclista en BiDeal! 🚲💨 Pedaleamos por Pamplona, comparamos nuestros kilómetros semanales y si somos al menos 4 y sumamos 200 km entre todos, ¡ganamos KmCoins juntos para canjear en comercios locales! Descarga la app en https://www.bideal.org y únete con mi código: \(estadisticasVM.codigoGrupo)"
-        let av = UIActivityViewController(activityItems: [texto], applicationActivities: nil)
+    private func compartirWhatsApp() {
+        let directLink = estadisticasVM.enlaceDirectoGrupo
+        let texto = "¡Únete a mi grupo ciclista en BiDeal! 🚲💨\n\nPedaleamos juntos por Pamplona, sumamos km en equipo y conseguimos descuentos en comercios locales.\n\n👉 Pulsa en este enlace para unirte directamente a mi grupo sin meter códigos:\n\(directLink)\n\n(O abre la app en bideal://grupo?codigo=\(estadisticasVM.codigoEfectivo))"
         
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let rootVC = windowScene.windows.first?.rootViewController {
-            rootVC.present(av, animated: true, completion: nil)
+        guard let encoded = texto.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
+              let whatsappURL = URL(string: "whatsapp://send?text=\(encoded)") else {
+            return
         }
+        
+        if UIApplication.shared.canOpenURL(whatsappURL) {
+            UIApplication.shared.open(whatsappURL)
+        } else {
+            let av = UIActivityViewController(activityItems: [texto], applicationActivities: nil)
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let rootVC = windowScene.windows.first?.rootViewController {
+                rootVC.present(av, animated: true, completion: nil)
+            }
+        }
+    }
+}
+
+struct ModalCanjeCodigoGrupo: View {
+    @Binding var inputCodigo: String
+    @Binding var uniendo: Bool
+    let onUnirse: () -> Void
+    @Environment(\.dismiss) var dismiss
+    
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 20) {
+                Text("Únete a un Grupo Ciclista")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                
+                Text("Introduce el código de grupo que te ha compartido tu amigo para sumar kilómetros juntos en la clasificación semanal.")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                
+                TextField("Ej: BD-852F7B", text: $inputCodigo)
+                    .textInputAutocapitalization(.characters)
+                    .autocorrectionDisabled()
+                    .font(.title3)
+                    .fontWeight(.heavy)
+                    .fontDesign(.monospaced)
+                    .multilineTextAlignment(.center)
+                    .padding()
+                    .background(Color.bidealBackground)
+                    .cornerRadius(12)
+                
+                Button(action: onUnirse) {
+                    HStack {
+                        if uniendo {
+                            ProgressView().tint(.white)
+                        } else {
+                            Text("Vincularme al Grupo")
+                                .fontWeight(.bold)
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(inputCodigo.trimmingCharacters(in: .whitespaces).isEmpty ? Color.gray : BiDealTheme.primary)
+                    .foregroundColor(.white)
+                    .cornerRadius(12)
+                }
+                .disabled(inputCodigo.trimmingCharacters(in: .whitespaces).isEmpty || uniendo)
+                
+                Spacer()
+            }
+            .padding(24)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cerrar") { dismiss() }
+                }
+            }
+        }
+        .presentationDetents([.medium])
     }
 }
