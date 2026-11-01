@@ -25,23 +25,13 @@ public struct LoginView: View {
                         Spacer().frame(height: 20)
                         
                         // Logo Oficial BiDeal
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 22)
-                                .fill(BiDealTheme.primary)
-                                .frame(width: 90, height: 90)
-                            
-                            Image(systemName: "bicycle")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 52, height: 52)
-                                .foregroundColor(.white)
-                        }
-                        .shadow(color: BiDealTheme.primary.opacity(0.3), radius: 10, x: 0, y: 5)
+                        BiDealLogoView(size: 100, cornerRadius: 20)
+                            .shadow(color: BiDealTheme.primary.opacity(0.3), radius: 10, x: 0, y: 5)
                         
                         // Títulos de marca
                         VStack(spacing: 4) {
                             Text("BiDeal")
-                                .font(.system(size: 34, weight: .heavy, design: .rounded))
+                                .font(.system(size: 32, weight: .heavy, design: .rounded))
                                 .italic()
                                 .foregroundColor(BiDealTheme.primary)
                             
@@ -50,7 +40,7 @@ public struct LoginView: View {
                                 .foregroundColor(.secondary)
                         }
                         
-                        Spacer().frame(height: 10)
+                        Spacer().frame(height: 8)
                         
                         // Tarjeta de Formulario de Acceso
                         VStack(alignment: .leading, spacing: 18) {
@@ -81,6 +71,10 @@ public struct LoginView: View {
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 12)
                                         .stroke(Color.bidealBorder, lineWidth: 1)
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .stroke(email.isEmpty ? Color.clear : BiDealTheme.primary.opacity(0.6), lineWidth: 1)
+                                        )
                                 )
                             }
                             
@@ -164,7 +158,7 @@ public struct LoginView: View {
                                 .padding(.vertical, 14)
                                 .background(BiDealTheme.primary)
                                 .foregroundColor(.white)
-                                .cornerRadius(14)
+                                .cornerRadius(16)
                                 .shadow(color: BiDealTheme.primary.opacity(0.3), radius: 6, x: 0, y: 3)
                             }
                             .disabled(authVM.isLoading)
@@ -182,13 +176,30 @@ public struct LoginView: View {
                                 .foregroundColor(.secondary)
                             
                             Button(action: { showRegister = true }) {
-                                Text("Regístrate aquí")
+                                Text("Regístrate gratis")
                                     .font(.subheadline)
                                     .fontWeight(.bold)
                                     .foregroundColor(BiDealTheme.primary)
                             }
                         }
-                        .padding(.top, 8)
+                        .padding(.top, 4)
+                        
+                        // Botón de Acceso Rápido / Demo para pruebas inmediatas
+                        Button(action: {
+                            authVM.entrarModoInvitado()
+                        }) {
+                            HStack(spacing: 6) {
+                                Image(systemName: "sparkles")
+                                Text("Explorar como invitado")
+                            }
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                            .background(Color.secondary.opacity(0.1))
+                            .cornerRadius(12)
+                        }
+                        .padding(.top, 4)
                         
                         Spacer()
                     }

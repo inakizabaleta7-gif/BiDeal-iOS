@@ -32,6 +32,9 @@
 		C100000000000000000000016 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000016 /* LoginView.swift */; };
 		C100000000000000000000017 /* RegisterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000017 /* RegisterView.swift */; };
 		C100000000000000000000018 /* DetalleComercioView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000018 /* DetalleComercioView.swift */; };
+		C100000000000000000000019 /* HitosView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000019 /* HitosView.swift */; };
+		C100000000000000000000020 /* logo_bideal.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000020 /* logo_bideal.jpeg */; };
+		C100000000000000000000021 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000021 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -62,6 +65,9 @@
 		B100000000000000000000018 /* DetalleComercioView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/Recompensas/DetalleComercioView.swift"; sourceTree = "<group>"; };
 		B100000000000000000000FF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "App/Info.plist"; sourceTree = "<group>"; };
 		A10000000000000000000009 /* BiDeal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BiDeal.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B100000000000000000000019 /* HitosView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/Home/HitosView.swift"; sourceTree = "<group>"; };
+		B100000000000000000000020 /* logo_bideal.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "Resources/logo_bideal.jpeg"; sourceTree = "<group>"; };
+		B100000000000000000000021 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Resources/Assets.xcassets"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +109,9 @@
 				B100000000000000000000016 /* LoginView.swift */,
 				B100000000000000000000017 /* RegisterView.swift */,
 				B100000000000000000000018 /* DetalleComercioView.swift */,
+				B100000000000000000000019 /* HitosView.swift */,
+				B100000000000000000000020 /* logo_bideal.jpeg */,
+				B100000000000000000000021 /* Assets.xcassets */,
 				B100000000000000000000FF /* Info.plist */,
 				A10000000000000000000010 /* Products */,
 			);
@@ -174,6 +183,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C100000000000000000000020 /* logo_bideal.jpeg in Resources */,
+				C100000000000000000000021 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -209,6 +220,7 @@
 				C100000000000000000000016 /* LoginView.swift in Sources */,
 				C100000000000000000000017 /* RegisterView.swift in Sources */,
 				C100000000000000000000018 /* DetalleComercioView.swift in Sources */,
+				C100000000000000000000019 /* HitosView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

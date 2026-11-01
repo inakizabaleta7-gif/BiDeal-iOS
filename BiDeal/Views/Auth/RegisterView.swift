@@ -32,7 +32,10 @@ public struct RegisterView: View {
             ScrollView {
                 VStack(spacing: 16) {
                     // Cabecera
-                    VStack(spacing: 4) {
+                    VStack(spacing: 6) {
+                        BiDealLogoView(size: 64, cornerRadius: 14)
+                            .shadow(color: BiDealTheme.primary.opacity(0.2), radius: 6, x: 0, y: 3)
+                        
                         Text("Crear nueva cuenta")
                             .font(.title2)
                             .fontWeight(.bold)

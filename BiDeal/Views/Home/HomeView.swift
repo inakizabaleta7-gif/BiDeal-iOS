@@ -9,6 +9,7 @@ public struct HomeView: View {
     @State private var mostrarAjustes: Bool = false
     @State private var mostrarHitos: Bool = false
     @State private var mostrarMapaPantallaCompleta: Bool = false
+    @State private var recompensaParaDetalle: RecompensaUiModel? = nil
     
     // Coordenadas oficiales de Pamplona
     @State private var region = MKCoordinateRegion(
@@ -29,16 +30,9 @@ public struct HomeView: View {
                 VStack(spacing: 0) {
                     // Cabecera Oficial Idéntica a Android
                     HStack(spacing: 6) {
-                        // Logo + BiDeal en cursiva
-                        HStack(spacing: 6) {
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 8)
-                                    .fill(BiDealTheme.primary)
-                                    .frame(width: 38, height: 38)
-                                Image(systemName: "bicycle")
-                                    .font(.system(size: 20, weight: .bold))
-                                    .foregroundColor(.white)
-                            }
+                        // Logo Oficial BiDeal + BiDeal en cursiva
+                        HStack(spacing: 8) {
+                            BiDealLogoView(size: 42, cornerRadius: 8)
                             
                             Text("BiDeal")
                                 .font(.system(size: 26, weight: .heavy, design: .rounded))
@@ -115,7 +109,8 @@ public struct HomeView: View {
                                 region: $region,
                                 comercios: comerciosVM.recompensas,
                                 seleccionado: $comercioSeleccionadoEnMapa,
-                                onExpandir: { mostrarMapaPantallaCompleta = true }
+                                onExpandir: { mostrarMapaPantallaCompleta = true },
+                                onVerDetalle: { r in recompensaParaDetalle = r }
                             )
                             
                             // Tarjeta de Progreso Automático (Verde Bosque #14532D)
@@ -138,7 +133,10 @@ public struct HomeView: View {
                 AjustesView()
             }
             .sheet(isPresented: $mostrarHitos) {
-                CaminoDeMisionesModal(misiones: homeVM.misionesDiarias)
+                HitosView()
+            }
+            .sheet(item: $recompensaParaDetalle) { recompensa in
+                DetalleComercioView(recompensa: recompensa)
             }
             .fullScreenCover(isPresented: $mostrarMapaPantallaCompleta) {
                 MapaPantallaCompletaView(
@@ -171,6 +169,7 @@ struct TarjetaMapaHome: View {
     let comercios: [RecompensaUiModel]
     @Binding var seleccionado: RecompensaUiModel?
     let onExpandir: () -> Void
+    var onVerDetalle: (RecompensaUiModel) -> Void = { _ in }
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -184,7 +183,7 @@ struct TarjetaMapaHome: View {
                         VStack(spacing: 0) {
                             ZStack {
                                 Circle()
-                                    .fill(seleccionado?.id == r.id ? Color.orange : BiDealTheme.primary)
+                                    .fill(seleccionado?.id == r.id ? Color(red: 234/255, green: 88/255, blue: 12/255) : BiDealTheme.primary)
                                     .frame(width: 34, height: 34)
                                     .shadow(radius: 4)
                                 Image(systemName: "storefront.fill")
@@ -193,14 +192,14 @@ struct TarjetaMapaHome: View {
                             }
                             Image(systemName: "triangle.fill")
                                 .font(.system(size: 8))
-                                .foregroundColor(seleccionado?.id == r.id ? Color.orange : BiDealTheme.primary)
+                                .foregroundColor(seleccionado?.id == r.id ? Color(red: 234/255, green: 88/255, blue: 12/255) : BiDealTheme.primary)
                                 .rotationEffect(.degrees(180))
                                 .offset(y: -2)
                         }
                     }
                 }
             }
-            .frame(height: 175)
+            .frame(height: 180)
             .cornerRadius(20)
             .overlay(
                 RoundedRectangle(cornerRadius: 20)
@@ -237,53 +236,90 @@ struct TarjetaMapaHome: View {
                 }
                 .padding(10)
             }
-            .frame(height: 175, alignment: .topTrailing)
+            .frame(height: 180, alignment: .topTrailing)
             
-            // Drawer emergente al pulsar un pin
+            // Drawer emergente al pulsar un pin (Idéntico a Android)
             if let sel = seleccionado {
-                HStack(alignment: .center, spacing: 12) {
-                    VStack(alignment: .leading, spacing: 2) {
-                        HStack {
-                            Text(sel.comercioNombre)
-                                .font(.subheadline)
-                                .fontWeight(.heavy)
-                                .foregroundColor(Color.bidealDarkGreen)
-                            
-                            Text(sel.categoria)
-                                .font(.system(size: 10, weight: .bold))
-                                .foregroundColor(BiDealTheme.primary)
-                                .padding(.horizontal, 6)
-                                .padding(.vertical, 2)
-                                .background(BiDealTheme.primaryLight)
-                                .cornerRadius(6)
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack(alignment: .center, spacing: 8) {
+                        Text(sel.comercioNombre)
+                            .font(.system(size: 15, weight: .heavy))
+                            .foregroundColor(Color.bidealDarkGreen)
+                        
+                        Text(sel.categoria)
+                            .font(.system(size: 10, weight: .bold))
+                            .foregroundColor(BiDealTheme.primary)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(BiDealTheme.primaryLight)
+                            .cornerRadius(6)
+                        
+                        Spacer()
+                        
+                        Button(action: { seleccionado = nil }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundColor(.secondary)
+                                .font(.system(size: 18))
+                        }
+                    }
+                    
+                    Text(sel.titulo)
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundColor(.primary)
+                        .lineLimit(1)
+                    
+                    Text("📍 \(sel.direccion)")
+                        .font(.system(size: 11))
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
+                    
+                    // Distancia y tiempo en bici
+                    Text("🚲 1.2 km (~5 min en bici)")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundColor(BiDealTheme.primary)
+                    
+                    // Botones de Acción
+                    HStack(spacing: 8) {
+                        // Botón Ruta en bici
+                        Button(action: {
+                            let lat = sel.latitud ?? 42.8168
+                            let lon = sel.longitud ?? -1.6432
+                            if let url = URL(string: "maps://?daddr=\(lat),\(lon)&dirflg=b") {
+                                UIApplication.shared.open(url)
+                            }
+                        }) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "bicycle")
+                                Text("Ruta en bici")
+                            }
+                            .font(.system(size: 12, weight: .bold))
+                            .foregroundColor(Color.bidealDarkGreen)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 8)
+                            .background(Color.secondary.opacity(0.12))
+                            .cornerRadius(10)
                         }
                         
-                        Text(sel.titulo)
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                            .lineLimit(1)
-                    }
-                    
-                    Spacer()
-                    
-                    Text("\(sel.precio) KMC")
-                        .font(.caption)
-                        .fontWeight(.heavy)
-                        .foregroundColor(BiDealTheme.accentGold)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(BiDealTheme.goldLight)
-                        .cornerRadius(8)
-                    
-                    Button(action: { seleccionado = nil }) {
-                        Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(.secondary)
+                        // Botón Ver Recompensa
+                        Button(action: {
+                            onVerDetalle(sel)
+                        }) {
+                            HStack(spacing: 4) {
+                                Text("Ver (\(sel.precio) KMC)")
+                            }
+                            .font(.system(size: 12, weight: .bold))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 8)
+                            .background(BiDealTheme.primary)
+                            .cornerRadius(10)
+                        }
                     }
                 }
-                .padding(10)
-                .background(Color.bidealSurface.opacity(0.96))
-                .cornerRadius(14)
-                .shadow(radius: 6)
+                .padding(12)
+                .background(Color.bidealSurface)
+                .cornerRadius(16)
+                .shadow(color: Color.black.opacity(0.15), radius: 8, x: 0, y: 3)
                 .padding(8)
             }
         }
@@ -353,76 +389,71 @@ struct TarjetaProgresoAutomaticoView: View {
                 }
                 .frame(height: 10)
                 
-                Text(siguienteMision.completadoTodo ?
-                     "¡Has completado todas las misiones de hoy (15 km)!" :
-                     "¡Estás a \(String(format: "%.1f", siguienteMision.faltan)) km de tu siguiente misión (\(Int(siguienteMision.meta)) km)!"
-                )
-                .font(.system(size: 12, weight: .medium))
-                .foregroundColor(Color(red: 134/255, green: 239/255, blue: 172/255))
+                if siguienteMision.completadoTodo {
+                    Text("¡Has completado todas las misiones diarias de hoy (15 km)!")
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(Color(red: 134/255, green: 239/255, blue: 172/255))
+                } else {
+                    Text("¡Estás a \(String(format: "%.1f", siguienteMision.faltan)) km de tu siguiente misión (\(String(format: "%.1f", siguienteMision.meta)) km)!")
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(Color(red: 134/255, green: 239/255, blue: 172/255))
+                }
             }
-            .padding(.top, 4)
         }
-        .padding(.vertical, 24)
-        .padding(.horizontal, 20)
+        .padding(20)
         .frame(maxWidth: .infinity)
-        .background(Color(red: 20/255, green: 83/255, blue: 45/255)) // #14532D (BiDealForest)
+        .background(Color.bidealForest)
         .cornerRadius(28)
-        .shadow(color: Color(red: 20/255, green: 83/255, blue: 45/255).opacity(0.35), radius: 12, x: 0, y: 6)
+        .shadow(color: Color.black.opacity(0.12), radius: 10, x: 0, y: 5)
+        .onTapGesture {
+            onVerMisiones()
+        }
     }
 }
 
 // ==========================================
-// COMPONENTE: IMPACTO AMBIENTAL (MITECO)
+// SECCIÓN DE IMPACTO AMBIENTAL (MITECO)
 // ==========================================
 struct SeccionImpactoAmbientalView: View {
     let distanciaTotal: Double
     
+    var co2EvitadoKg: Double {
+        distanciaTotal * 0.160
+    }
+    
+    var arbolesEquivalentes: Double {
+        co2EvitadoKg / 20.0
+    }
+    
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("Tu Huella Positiva en Pamplona")
+        VStack(alignment: .leading, spacing: 14) {
+            Text("Tu Huella Verde en Pamplona")
                 .font(.headline)
                 .fontWeight(.bold)
                 .foregroundColor(Color.bidealDarkGreen)
             
-            HStack(spacing: 10) {
-                // CO2 Evitado
-                TarjetaImpactoMini(
+            HStack(spacing: 12) {
+                TarjetaMetricaImpacto(
                     icono: "leaf.fill",
                     colorIcono: BiDealTheme.primary,
-                    valor: String(format: "%.1f kg", distanciaTotal * 0.142),
-                    etiqueta: "CO₂ Evitado",
-                    subetiqueta: "Estándar MITECO"
+                    valor: String(format: "%.1f kg", co2EvitadoKg),
+                    etiqueta: "CO₂ Ahorrado",
+                    subetiqueta: "vs transporte motor"
                 )
                 
-                // Energía Limpia
-                TarjetaImpactoMini(
-                    icono: "bolt.fill",
-                    colorIcono: Color(red: 234/255, green: 88/255, blue: 12/255),
-                    valor: "\(Int(distanciaTotal * 40)) Wh",
-                    etiqueta: "Energía Limpia",
-                    subetiqueta: "Generada en bici"
-                )
-                
-                // Tiempo Pedaleado
-                TarjetaImpactoMini(
-                    icono: "clock.fill",
-                    colorIcono: Color(red: 14/255, green: 165/255, blue: 233/255),
-                    valor: "\(Int(distanciaTotal * 3.5)) min",
-                    etiqueta: "Movilidad Activa",
-                    subetiqueta: "Tiempo en ruta"
+                TarjetaMetricaImpacto(
+                    icono: "tree.fill",
+                    colorIcono: Color(red: 34/255, green: 197/255, blue: 94/255),
+                    valor: String(format: "%.2f", arbolesEquivalentes),
+                    etiqueta: "Árboles",
+                    subetiqueta: "oxígeno equivalente"
                 )
             }
-            
-            Text("ℹ️ Metodología Oficial: Calculado según el estándar MITECO (Ministerio para la Transición Ecológica) estimando la sustitución media de un turismo urbano de combustión (142 g CO2/km).")
-                .font(.system(size: 10))
-                .foregroundColor(.secondary)
-                .italic()
-                .padding(.top, 4)
         }
     }
 }
 
-struct TarjetaImpactoMini: View {
+struct TarjetaMetricaImpacto: View {
     let icono: String
     let colorIcono: Color
     let valor: String
@@ -430,21 +461,23 @@ struct TarjetaImpactoMini: View {
     let subetiqueta: String
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            ZStack {
-                Circle()
-                    .fill(colorIcono.opacity(0.12))
-                    .frame(width: 30, height: 30)
-                Image(systemName: icono)
-                    .font(.system(size: 13, weight: .bold))
-                    .foregroundColor(colorIcono)
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                ZStack {
+                    Circle()
+                        .fill(colorIcono.opacity(0.15))
+                        .frame(width: 36, height: 36)
+                    Image(systemName: icono)
+                        .font(.system(size: 16))
+                        .foregroundColor(colorIcono)
+                }
+                Spacer()
             }
             
-            Text(valor)
-                .font(.system(size: 16, weight: .heavy))
-                .foregroundColor(Color.bidealDarkGreen)
-            
-            VStack(alignment: .leading, spacing: 1) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(valor)
+                    .font(.system(size: 18, weight: .heavy, design: .rounded))
+                    .foregroundColor(Color.bidealDarkGreen)
                 Text(etiqueta)
                     .font(.system(size: 11, weight: .bold))
                     .foregroundColor(.primary)
@@ -458,70 +491,6 @@ struct TarjetaImpactoMini: View {
         .background(Color.bidealSurface)
         .cornerRadius(16)
         .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color.bidealBorder, lineWidth: 1))
-    }
-}
-
-// Modal Camino de Misiones
-struct CaminoDeMisionesModal: View {
-    @Environment(\.dismiss) var dismiss
-    let misiones: [MisionUiModel]
-    
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 14) {
-                    ForEach(misiones) { m in
-                        HStack(spacing: 14) {
-                            ZStack {
-                                Circle()
-                                    .fill(m.completada ? BiDealTheme.primaryLight : Color.gray.opacity(0.1))
-                                    .frame(width: 44, height: 44)
-                                Image(systemName: m.completada ? "checkmark.circle.fill" : "star.fill")
-                                    .foregroundColor(m.completada ? BiDealTheme.primary : .gray)
-                                    .font(.title3)
-                            }
-                            
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(m.titulo)
-                                    .font(.subheadline)
-                                    .fontWeight(.bold)
-                                
-                                HStack {
-                                    Text("\(String(format: "%.1f", m.kmActuales)) / \(Int(m.kmObjetivo)) km")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                    Spacer()
-                                    Text("+\(m.recompensaCoins) KMC")
-                                        .font(.caption)
-                                        .fontWeight(.bold)
-                                        .foregroundColor(BiDealTheme.accentGold)
-                                }
-                                
-                                GeometryReader { geo in
-                                    ZStack(alignment: .leading) {
-                                        Capsule().fill(Color.gray.opacity(0.2)).frame(height: 6)
-                                        Capsule().fill(BiDealTheme.primary).frame(width: geo.size.width * CGFloat(m.progreso), height: 6)
-                                    }
-                                }
-                                .frame(height: 6)
-                            }
-                        }
-                        .padding(14)
-                        .background(Color.bidealSurface)
-                        .cornerRadius(16)
-                        .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color.bidealBorder, lineWidth: 1))
-                    }
-                }
-                .padding()
-            }
-            .navigationTitle("Camino de Misiones")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cerrar") { dismiss() }
-                }
-            }
-        }
     }
 }
 

@@ -213,6 +213,28 @@ public final class AuthViewModel: ObservableObject {
     }
     
     @MainActor
+    public func entrarModoInvitado() {
+        self.currentUser = Usuario(
+            id: "local-demo-user",
+            nombre: "Iñaki",
+            email: "demo@bideal.org",
+            telefono: "600123456",
+            genero: "Hombre",
+            ciudad: "Pamplona",
+            kmcoins_balance: 140,
+            distancia_total_km: 42.5,
+            tiempo_total_segundos: 7800,
+            co2_ahorrado_kg: 8.9,
+            arboles_equivalentes: 0.5,
+            notificaciones: true,
+            codigo_amigo: "BIDEAL-PAMPLONA",
+            fecha_registro: ISO8601DateFormatter().string(from: Date())
+        )
+        self.kmcoinsBalance = 140
+        self.isLoggedIn = true
+    }
+    
+    @MainActor
     public func cargarSaldoKmCoins() async {
         guard let uid = currentUser?.id ?? userDefaults.string(forKey: kUserId) else { return }
         if let saldo = try? await SupabaseService.shared.fetchSaldoKmCoins(userId: uid) {
