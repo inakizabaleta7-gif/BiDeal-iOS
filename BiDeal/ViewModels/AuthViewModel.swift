@@ -196,20 +196,24 @@ public final class AuthViewModel: ObservableObject {
                 // Si aún no está en la tabla pública de usuarios, inicializar con los datos básicos
                 perfilOpt = Usuario(
                     id: userId,
-                    nombre: email?.components(separatedBy: "@").first?.capitalized ?? "Ciclista",
                     email: email,
+                    nombre: email?.components(separatedBy: "@").first?.capitalized ?? "Ciclista",
+                    apellidos: "",
                     genero: "Prefiero no decirlo",
                     telefono: "",
                     ciudad: "Pamplona",
+                    notificaciones: true,
+                    activo: true,
                     distancia_total_km: 0.0,
+                    co2_total_evitado_kg: 0.0,
                     km_hoy: 0.0,
                     km_semana: 0.0,
-                    co2_total_evitado_kg: 0.0,
-                    kmcoins_balance: 0,
                     racha_oro_semanal: 1,
                     codigo_referido: "BI-\(userId.prefix(6).uppercased())",
-                    activo: true,
-                    notificaciones: true
+                    referido_por: nil,
+                    plataforma: "ios",
+                    kmcoins_balance: 0,
+                    creado_en: nil
                 )
             }
             
