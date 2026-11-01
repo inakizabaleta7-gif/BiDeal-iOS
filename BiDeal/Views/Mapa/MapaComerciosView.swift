@@ -9,7 +9,7 @@ public struct MapaComerciosView: View {
         span: MKCoordinateSpan(latitudeDelta: 0.035, longitudeDelta: 0.035)
     )
     
-    var body: some View {
+    public var body: some View {
         NavigationStack {
             ZStack(alignment: .bottom) {
                 // Mapa Nativo de Apple

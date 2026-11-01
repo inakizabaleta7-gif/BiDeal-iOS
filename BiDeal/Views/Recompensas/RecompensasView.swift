@@ -7,7 +7,7 @@ public struct RecompensasView: View {
     @State private var descuentoSeleccionado: (Descuento, Comercio)?
     @State private var mostrarModalQR: Bool = false
     
-    var body: some View {
+    public var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 16) {

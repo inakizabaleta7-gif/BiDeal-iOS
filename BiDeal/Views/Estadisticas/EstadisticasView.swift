@@ -3,7 +3,7 @@ import SwiftUI
 public struct EstadisticasView: View {
     @EnvironmentObject var estadisticasVM: EstadisticasViewModel
     
-    var body: some View {
+    public var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {

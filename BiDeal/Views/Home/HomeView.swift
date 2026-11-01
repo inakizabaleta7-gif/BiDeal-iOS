@@ -4,7 +4,7 @@ public struct HomeView: View {
     @EnvironmentObject var locationManager: LocationManager
     @EnvironmentObject var homeVM: HomeViewModel
     
-    var body: some View {
+    public var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
