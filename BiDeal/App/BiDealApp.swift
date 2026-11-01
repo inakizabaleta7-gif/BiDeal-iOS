@@ -8,10 +8,26 @@ struct BiDealApp: App {
     @StateObject private var estadisticasVM = EstadisticasViewModel()
     @StateObject private var comerciosVM = ComerciosViewModel()
     
+    @AppStorage("terminosAceptados") private var terminosAceptados: Bool = false
+    @AppStorage("tutorialMostrado") private var tutorialMostrado: Bool = false
+    
     var body: some Scene {
         WindowGroup {
             Group {
-                if authVM.isLoggedIn {
+                if !terminosAceptados {
+                    TerminosView(
+                        onAccept: {
+                            terminosAceptados = true
+                        },
+                        showBackButton: false
+                    )
+                } else if !tutorialMostrado {
+                    TutorialView(
+                        onFinishTutorial: {
+                            tutorialMostrado = true
+                        }
+                    )
+                } else if authVM.isLoggedIn {
                     MainTabView()
                 } else {
                     LoginView()

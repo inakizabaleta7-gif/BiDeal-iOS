@@ -9,6 +9,7 @@ public struct HomeView: View {
     @State private var mostrarAjustes: Bool = false
     @State private var mostrarHitos: Bool = false
     @State private var mostrarMapaPantallaCompleta: Bool = false
+    @State private var mostrarDialogoRacha: Bool = false
     @State private var recompensaParaDetalle: RecompensaUiModel? = nil
     
     // Coordenadas oficiales de Pamplona
@@ -43,18 +44,20 @@ public struct HomeView: View {
                         Spacer()
                         
                         // Chip Racha Semanal (Fuego + Número)
-                        HStack(spacing: 4) {
-                            Image(systemName: "flame.fill")
-                                .foregroundColor(Color(red: 234/255, green: 88/255, blue: 12/255))
-                                .font(.system(size: 14))
-                            Text("\(homeVM.rachaSemanas)")
-                                .font(.system(size: 13, weight: .bold))
-                                .foregroundColor(Color(red: 234/255, green: 88/255, blue: 12/255))
+                        Button(action: { mostrarDialogoRacha = true }) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "flame.fill")
+                                    .foregroundColor(Color(red: 234/255, green: 88/255, blue: 12/255))
+                                    .font(.system(size: 14))
+                                Text("\(homeVM.rachaSemanas)")
+                                    .font(.system(size: 13, weight: .bold))
+                                    .foregroundColor(Color(red: 234/255, green: 88/255, blue: 12/255))
+                            }
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 5)
+                            .background(Color(red: 255/255, green: 237/255, blue: 213/255))
+                            .cornerRadius(14)
                         }
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 5)
-                        .background(Color(red: 255/255, green: 237/255, blue: 213/255))
-                        .cornerRadius(14)
                         
                         // Chip KmCoins (KMC)
                         HStack(spacing: 5) {
@@ -150,6 +153,11 @@ public struct HomeView: View {
                     seleccionado: $comercioSeleccionadoEnMapa,
                     onCerrar: { mostrarMapaPantallaCompleta = false }
                 )
+            }
+            .alert("🔥 Racha Semanal", isPresented: $mostrarDialogoRacha) {
+                Button("Entendido", role: .cancel) { }
+            } message: {
+                Text("Llevas \(homeVM.rachaSemanas) \(homeVM.rachaSemanas == 1 ? "semana consecutiva" : "semanas consecutivas") pedaleando en BiDeal.\n\nCompleta al menos 20 km cada semana para mantener encendida tu llama y desbloquear la Medalla de Oro de Navarra.")
             }
             .onAppear {
                 homeVM.sincronizarHealthKitAutomatico()

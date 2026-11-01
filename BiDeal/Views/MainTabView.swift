@@ -13,7 +13,7 @@ public struct MainTabView: View {
         TabView(selection: $tabSeleccionada) {
             HomeView()
                 .tabItem {
-                    Label("Inicio", systemImage: "bicycle")
+                    Label("Inicio", systemImage: "house.fill")
                 }
                 .tag(0)
             
