@@ -28,6 +28,10 @@
 		C10000000000000000000012 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000012 /* MainTabView.swift */; };
 		C100000000000000000000013 /* HealthKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000013 /* HealthKitManager.swift */; };
 		C100000000000000000000014 /* AjustesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000014 /* AjustesView.swift */; };
+		C100000000000000000000015 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000015 /* AuthViewModel.swift */; };
+		C100000000000000000000016 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000016 /* LoginView.swift */; };
+		C100000000000000000000017 /* RegisterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000017 /* RegisterView.swift */; };
+		C100000000000000000000018 /* DetalleComercioView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000018 /* DetalleComercioView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -52,6 +56,10 @@
 		B10000000000000000000012 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/MainTabView.swift"; sourceTree = "<group>"; };
 		B100000000000000000000013 /* HealthKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Services/HealthKitManager.swift"; sourceTree = "<group>"; };
 		B100000000000000000000014 /* AjustesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/Ajustes/AjustesView.swift"; sourceTree = "<group>"; };
+		B100000000000000000000015 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewModels/AuthViewModel.swift"; sourceTree = "<group>"; };
+		B100000000000000000000016 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/Auth/LoginView.swift"; sourceTree = "<group>"; };
+		B100000000000000000000017 /* RegisterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/Auth/RegisterView.swift"; sourceTree = "<group>"; };
+		B100000000000000000000018 /* DetalleComercioView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/Recompensas/DetalleComercioView.swift"; sourceTree = "<group>"; };
 		B100000000000000000000FF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "App/Info.plist"; sourceTree = "<group>"; };
 		A10000000000000000000009 /* BiDeal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BiDeal.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -91,6 +99,10 @@
 				B10000000000000000000012 /* MainTabView.swift */,
 				B100000000000000000000013 /* HealthKitManager.swift */,
 				B100000000000000000000014 /* AjustesView.swift */,
+				B100000000000000000000015 /* AuthViewModel.swift */,
+				B100000000000000000000016 /* LoginView.swift */,
+				B100000000000000000000017 /* RegisterView.swift */,
+				B100000000000000000000018 /* DetalleComercioView.swift */,
 				B100000000000000000000FF /* Info.plist */,
 				A10000000000000000000010 /* Products */,
 			);
@@ -193,6 +205,10 @@
 				C10000000000000000000012 /* MainTabView.swift in Sources */,
 				C100000000000000000000013 /* HealthKitManager.swift in Sources */,
 				C100000000000000000000014 /* AjustesView.swift in Sources */,
+				C100000000000000000000015 /* AuthViewModel.swift in Sources */,
+				C100000000000000000000016 /* LoginView.swift in Sources */,
+				C100000000000000000000017 /* RegisterView.swift in Sources */,
+				C100000000000000000000018 /* DetalleComercioView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

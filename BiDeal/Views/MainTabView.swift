@@ -4,6 +4,8 @@ public struct MainTabView: View {
     @State private var tabSeleccionada: Int = 0
     @EnvironmentObject var homeVM: HomeViewModel
     @EnvironmentObject var estadisticasVM: EstadisticasViewModel
+    @EnvironmentObject var comerciosVM: ComerciosViewModel
+    @EnvironmentObject var authVM: AuthViewModel
     
     public init() {}
     
@@ -15,9 +17,9 @@ public struct MainTabView: View {
                 }
                 .tag(0)
             
-            MapaComerciosView()
+            RecompensasView()
                 .tabItem {
-                    Label("Mapa", systemImage: "map.fill")
+                    Label("Recompensas", systemImage: "gift.fill")
                 }
                 .tag(1)
             
@@ -26,24 +28,18 @@ public struct MainTabView: View {
                     Label("Estadísticas", systemImage: "chart.bar.fill")
                 }
                 .tag(2)
-            
-            RecompensasView()
-                .tabItem {
-                    Label("Premios", systemImage: "gift.fill")
-                }
-                .tag(3)
-            
-            AjustesView()
-                .tabItem {
-                    Label("Ajustes", systemImage: "gearshape.fill")
-                }
-                .tag(4)
         }
         .tint(BiDealTheme.primary)
         .task {
-            // Cargar datos en vivo al arrancar la app
-            await homeVM.cargarDatosSupabase()
-            await estadisticasVM.cargarGrupo(userId: homeVM.usuario.id)
+            // Sincronizar y cargar datos en vivo de Supabase al arrancar la app
+            if let user = authVM.currentUser {
+                homeVM.actualizarConUsuario(user)
+                await estadisticasVM.cargarGrupo(userId: user.id)
+            } else {
+                await homeVM.cargarDatosSupabase()
+            }
+            await comerciosVM.cargarComerciosYDescuentos()
+            await authVM.cargarSaldoKmCoins()
         }
     }
 }

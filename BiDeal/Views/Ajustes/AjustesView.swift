@@ -2,6 +2,8 @@ import SwiftUI
 
 public struct AjustesView: View {
     @EnvironmentObject var homeVM: HomeViewModel
+    @EnvironmentObject var authVM: AuthViewModel
+    @Environment(\.dismiss) var dismiss
     @StateObject private var healthKitManager = HealthKitManager.shared
     
     @AppStorage("modoOscuro") private var modoOscuro: Bool = false
@@ -278,6 +280,32 @@ public struct AjustesView: View {
                             .stroke(Color.bidealBorder, lineWidth: 1)
                     )
                     .padding(.horizontal)
+                    
+                    // ==========================================
+                    // 5. CERRAR SESIÓN
+                    // ==========================================
+                    Button(action: {
+                        authVM.cerrarSesion()
+                        dismiss()
+                    }) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "rectangle.portrait.and.arrow.right")
+                                .font(.system(size: 16, weight: .bold))
+                            Text("Cerrar Sesión")
+                                .font(.system(size: 15, weight: .bold))
+                        }
+                        .foregroundColor(Color(red: 220/255, green: 38/255, blue: 38/255))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(Color(red: 254/255, green: 242/255, blue: 242/255))
+                        .cornerRadius(16)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16)
+                                .stroke(Color(red: 254/255, green: 202/255, blue: 202/255), lineWidth: 1)
+                        )
+                    }
+                    .padding(.horizontal)
+                    .padding(.top, 4)
                     
                 }
                 .padding(.vertical)

@@ -2,10 +2,14 @@ import Foundation
 import CoreLocation
 
 public struct Comercio: Identifiable, Codable {
-    public let id: String
+    public let id: Int
     public let nombre: String
     public let categoria: String?
     public let direccion: String?
+    public let ciudad: String?
+    public let telefono: String?
+    public let email_contacto: String?
+    public let codigo_qr_comercio: String?
     public let latitud: Double?
     public let longitud: Double?
     public let logo_url: String?
@@ -22,7 +26,7 @@ public struct Comercio: Identifiable, Codable {
         if cat.contains("deporte") || cat.contains("bici") || cat.contains("taller") { return "deportes" }
         if cat.contains("cafe") || cat.contains("bar") || cat.contains("restauran") { return "restauracion" }
         if cat.contains("cultur") || cat.contains("libro") || cat.contains("librer") { return "cultura" }
-        if cat.contains("salud") || cat.contains("optic") || cat.contains("clinic") { return "salud" }
+        if cat.contains("moda") || cat.contains("ropa") || cat.contains("sostenible") { return "moda" }
         return "comercio"
     }
     
@@ -31,7 +35,7 @@ public struct Comercio: Identifiable, Codable {
         case "deportes": return "🚲"
         case "restauracion": return "☕"
         case "cultura": return "📚"
-        case "salud": return "🌿"
+        case "moda": return "👕"
         default: return "🛍️"
         }
     }

@@ -2,6 +2,7 @@ import SwiftUI
 
 @main
 struct BiDealApp: App {
+    @StateObject private var authVM = AuthViewModel()
     @StateObject private var locationManager = LocationManager.shared
     @StateObject private var homeVM = HomeViewModel()
     @StateObject private var estadisticasVM = EstadisticasViewModel()
@@ -9,15 +10,22 @@ struct BiDealApp: App {
     
     var body: some Scene {
         WindowGroup {
-            MainTabView()
-                .environmentObject(locationManager)
-                .environmentObject(homeVM)
-                .environmentObject(estadisticasVM)
-                .environmentObject(comerciosVM)
-                .tint(BiDealTheme.primary)
-                .onOpenURL { url in
-                    procesarDeepLink(url)
+            Group {
+                if authVM.isLoggedIn {
+                    MainTabView()
+                } else {
+                    LoginView()
                 }
+            }
+            .environmentObject(authVM)
+            .environmentObject(locationManager)
+            .environmentObject(homeVM)
+            .environmentObject(estadisticasVM)
+            .environmentObject(comerciosVM)
+            .tint(BiDealTheme.primary)
+            .onOpenURL { url in
+                procesarDeepLink(url)
+            }
         }
     }
     
@@ -37,7 +45,8 @@ struct BiDealApp: App {
             if let codigoLimpio = (codigoQuery ?? codigoPath)?.trimmingCharacters(in: .whitespacesAndNewlines).uppercased(),
                !codigoLimpio.isEmpty {
                 Task {
-                    let _ = await estadisticasVM.unirseAGrupo(userId: homeVM.usuario.id, codigo: codigoLimpio)
+                    let userId = authVM.currentUser?.id ?? homeVM.usuario.id
+                    let _ = await estadisticasVM.unirseAGrupo(userId: userId, codigo: codigoLimpio)
                 }
             }
         }
