@@ -8,6 +8,10 @@ public struct EstadoRastreadorView: View {
     
     public init() {}
     
+    private var permisoGpsOk: Bool {
+        locationManager.estadoAutorizacion == .authorizedAlways || locationManager.estadoAutorizacion == .authorizedWhenInUse
+    }
+    
     public var body: some View {
         NavigationStack {
             ZStack {
@@ -41,8 +45,8 @@ public struct EstadoRastreadorView: View {
                                 icono: "location.fill",
                                 titulo: "Servicios de Ubicación / GPS",
                                 descripcion: "Precisión de alta fidelidad para verificar trayectos urbanos.",
-                                estado: locationManager.authorizationStatus == .authorizedAlways || locationManager.authorizationStatus == .authorizedWhenInUse ? "Correcto" : "Revisar",
-                                colorEstado: locationManager.authorizationStatus == .authorizedAlways || locationManager.authorizationStatus == .authorizedWhenInUse ? BiDealTheme.primary : Color.orange
+                                estado: permisoGpsOk ? "Correcto" : "Revisar",
+                                colorEstado: permisoGpsOk ? BiDealTheme.primary : Color.orange
                             )
                             
                             ItemDiagnosticoRastreador(
