@@ -1,0 +1,47 @@
+name: Build iOS IPA (BiDeal)
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-14
+    timeout-minutes: 30
+
+    steps:
+      - name: Descargar Código
+        uses: actions/checkout@v4
+
+      - name: Seleccionar Versión de Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode_15.4.app
+          xcodebuild -version
+
+      - name: Compilar y Archivar Proyecto iOS
+        run: |
+          xcodebuild clean archive \
+            -project BiDeal.xcodeproj \
+            -scheme BiDeal \
+            -configuration Release \
+            -destination "generic/platform=iOS" \
+            -archivePath build/BiDeal.xcarchive \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY=""
+
+      - name: Empaquetar a Archivo IPA
+        run: |
+          mkdir -p build/Payload
+          cp -R build/BiDeal.xcarchive/Products/Applications/BiDeal.app build/Payload/
+          cd build
+          zip -qr BiDeal.ipa Payload
+          ls -la BiDeal.ipa
+
+      - name: Subir Archivo IPA como Artefacto de Descarga
+        uses: actions/upload-artifact@v4
+        with:
+          name: BiDeal-iOS-IPA
+          path: build/BiDeal.ipa
+          retention-days: 14

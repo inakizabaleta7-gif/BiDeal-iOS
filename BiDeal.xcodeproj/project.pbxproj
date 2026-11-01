@@ -1,0 +1,317 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		C10000000000000000000000 /* BiDealApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000000 /* BiDealApp.swift */; };
+		C10000000000000000000001 /* BiDealTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000001 /* BiDealTheme.swift */; };
+		C10000000000000000000002 /* Usuario.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000002 /* Usuario.swift */; };
+		C10000000000000000000003 /* Comercio.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000003 /* Comercio.swift */; };
+		C10000000000000000000004 /* Descuento.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000004 /* Descuento.swift */; };
+		C10000000000000000000005 /* MiembroLiga.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000005 /* MiembroLiga.swift */; };
+		C10000000000000000000006 /* ActividadCiclista.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000006 /* ActividadCiclista.swift */; };
+		C10000000000000000000007 /* CO2Calculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000007 /* CO2Calculator.swift */; };
+		C10000000000000000000008 /* SupabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000008 /* SupabaseService.swift */; };
+		C10000000000000000000009 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000009 /* LocationManager.swift */; };
+		C1000000000000000000000A /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000A /* HomeViewModel.swift */; };
+		C1000000000000000000000B /* EstadisticasViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000B /* EstadisticasViewModel.swift */; };
+		C1000000000000000000000C /* ComerciosViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000C /* ComerciosViewModel.swift */; };
+		C1000000000000000000000D /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000D /* HomeView.swift */; };
+		C1000000000000000000000E /* MapaComerciosView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000E /* MapaComerciosView.swift */; };
+		C1000000000000000000000F /* TarjetaLigaAmigosView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000F /* TarjetaLigaAmigosView.swift */; };
+		C10000000000000000000010 /* EstadisticasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000010 /* EstadisticasView.swift */; };
+		C10000000000000000000011 /* RecompensasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000011 /* RecompensasView.swift */; };
+		C10000000000000000000012 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000012 /* MainTabView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		B10000000000000000000000 /* BiDealApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "App/BiDealApp.swift"; sourceTree = "<group>"; };
+		B10000000000000000000001 /* BiDealTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "App/BiDealTheme.swift"; sourceTree = "<group>"; };
+		B10000000000000000000002 /* Usuario.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Models/Usuario.swift"; sourceTree = "<group>"; };
+		B10000000000000000000003 /* Comercio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Models/Comercio.swift"; sourceTree = "<group>"; };
+		B10000000000000000000004 /* Descuento.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Models/Descuento.swift"; sourceTree = "<group>"; };
+		B10000000000000000000005 /* MiembroLiga.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Models/MiembroLiga.swift"; sourceTree = "<group>"; };
+		B10000000000000000000006 /* ActividadCiclista.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Models/ActividadCiclista.swift"; sourceTree = "<group>"; };
+		B10000000000000000000007 /* CO2Calculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Services/CO2Calculator.swift"; sourceTree = "<group>"; };
+		B10000000000000000000008 /* SupabaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Services/SupabaseService.swift"; sourceTree = "<group>"; };
+		B10000000000000000000009 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Services/LocationManager.swift"; sourceTree = "<group>"; };
+		B1000000000000000000000A /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewModels/HomeViewModel.swift"; sourceTree = "<group>"; };
+		B1000000000000000000000B /* EstadisticasViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewModels/EstadisticasViewModel.swift"; sourceTree = "<group>"; };
+		B1000000000000000000000C /* ComerciosViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewModels/ComerciosViewModel.swift"; sourceTree = "<group>"; };
+		B1000000000000000000000D /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/Home/HomeView.swift"; sourceTree = "<group>"; };
+		B1000000000000000000000E /* MapaComerciosView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/Mapa/MapaComerciosView.swift"; sourceTree = "<group>"; };
+		B1000000000000000000000F /* TarjetaLigaAmigosView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/Estadisticas/TarjetaLigaAmigosView.swift"; sourceTree = "<group>"; };
+		B10000000000000000000010 /* EstadisticasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/Estadisticas/EstadisticasView.swift"; sourceTree = "<group>"; };
+		B10000000000000000000011 /* RecompensasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/Recompensas/RecompensasView.swift"; sourceTree = "<group>"; };
+		B10000000000000000000012 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/MainTabView.swift"; sourceTree = "<group>"; };
+		B100000000000000000000FF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "App/Info.plist"; sourceTree = "<group>"; };
+		A10000000000000000000009 /* BiDeal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BiDeal.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A10000000000000000000006 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A10000000000000000000008 = {
+			isa = PBXGroup;
+			children = (
+				B10000000000000000000000 /* BiDealApp.swift */,
+				B10000000000000000000001 /* BiDealTheme.swift */,
+				B10000000000000000000002 /* Usuario.swift */,
+				B10000000000000000000003 /* Comercio.swift */,
+				B10000000000000000000004 /* Descuento.swift */,
+				B10000000000000000000005 /* MiembroLiga.swift */,
+				B10000000000000000000006 /* ActividadCiclista.swift */,
+				B10000000000000000000007 /* CO2Calculator.swift */,
+				B10000000000000000000008 /* SupabaseService.swift */,
+				B10000000000000000000009 /* LocationManager.swift */,
+				B1000000000000000000000A /* HomeViewModel.swift */,
+				B1000000000000000000000B /* EstadisticasViewModel.swift */,
+				B1000000000000000000000C /* ComerciosViewModel.swift */,
+				B1000000000000000000000D /* HomeView.swift */,
+				B1000000000000000000000E /* MapaComerciosView.swift */,
+				B1000000000000000000000F /* TarjetaLigaAmigosView.swift */,
+				B10000000000000000000010 /* EstadisticasView.swift */,
+				B10000000000000000000011 /* RecompensasView.swift */,
+				B10000000000000000000012 /* MainTabView.swift */,
+				B100000000000000000000FF /* Info.plist */,
+				A10000000000000000000010 /* Products */,
+			);
+			path = BiDeal;
+			sourceTree = "<group>";
+		};
+		A10000000000000000000010 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A10000000000000000000009 /* BiDeal.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A10000000000000000000002 /* BiDeal */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A10000000000000000000004 /* Build configuration list for PBXNativeTarget "BiDeal" */;
+			buildPhases = (
+				A10000000000000000000005 /* Sources */,
+				A10000000000000000000006 /* Frameworks */,
+				A10000000000000000000007 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BiDeal;
+			productName = BiDeal;
+			productReference = A10000000000000000000009 /* BiDeal.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A10000000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					A10000000000000000000002 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = A10000000000000000000003 /* Build configuration list for PBXProject "BiDeal" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = es;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				es,
+				Base,
+			);
+			mainGroup = A10000000000000000000008;
+			productRefGroup = A10000000000000000000010 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A10000000000000000000002 /* BiDeal */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A10000000000000000000007 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A10000000000000000000005 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C10000000000000000000000 /* BiDealApp.swift in Sources */,
+				C10000000000000000000001 /* BiDealTheme.swift in Sources */,
+				C10000000000000000000002 /* Usuario.swift in Sources */,
+				C10000000000000000000003 /* Comercio.swift in Sources */,
+				C10000000000000000000004 /* Descuento.swift in Sources */,
+				C10000000000000000000005 /* MiembroLiga.swift in Sources */,
+				C10000000000000000000006 /* ActividadCiclista.swift in Sources */,
+				C10000000000000000000007 /* CO2Calculator.swift in Sources */,
+				C10000000000000000000008 /* SupabaseService.swift in Sources */,
+				C10000000000000000000009 /* LocationManager.swift in Sources */,
+				C1000000000000000000000A /* HomeViewModel.swift in Sources */,
+				C1000000000000000000000B /* EstadisticasViewModel.swift in Sources */,
+				C1000000000000000000000C /* ComerciosViewModel.swift in Sources */,
+				C1000000000000000000000D /* HomeView.swift in Sources */,
+				C1000000000000000000000E /* MapaComerciosView.swift in Sources */,
+				C1000000000000000000000F /* TarjetaLigaAmigosView.swift in Sources */,
+				C10000000000000000000010 /* EstadisticasView.swift in Sources */,
+				C10000000000000000000011 /* RecompensasView.swift in Sources */,
+				C10000000000000000000012 /* MainTabView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		D10000000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		D10000000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		D10000000000000000000003 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGNING_ALLOWED = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = BiDeal/App/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bideal.pamplona;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		D10000000000000000000004 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGNING_ALLOWED = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = BiDeal/App/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bideal.pamplona;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A10000000000000000000003 /* Build configuration list for PBXProject "BiDeal" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D10000000000000000000001 /* Debug */,
+				D10000000000000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A10000000000000000000004 /* Build configuration list for PBXNativeTarget "BiDeal" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D10000000000000000000003 /* Debug */,
+				D10000000000000000000004 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+	};
+	rootObject = A10000000000000000000001 /* Project object */;
+}
