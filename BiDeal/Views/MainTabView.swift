@@ -41,5 +41,13 @@ public struct MainTabView: View {
             await comerciosVM.cargarComerciosYDescuentos()
             await authVM.cargarSaldoKmCoins()
         }
+        .onChange(of: authVM.currentUser) { newUser in
+            if let user = newUser {
+                homeVM.actualizarConUsuario(user)
+                Task {
+                    await estadisticasVM.cargarGrupo(userId: user.id)
+                }
+            }
+        }
     }
 }

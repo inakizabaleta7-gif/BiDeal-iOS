@@ -10,7 +10,7 @@ public final class AuthViewModel: ObservableObject {
     @Published public var errorMessage: String? = nil
     @Published public var successMessage: String? = nil
     
-    // Almacenamiento local seguro
+    // Almacenamiento local persistente
     private let userDefaults = UserDefaults.standard
     private let kIsLoggedIn = "bideal_is_logged_in"
     private let kUserId = "bideal_user_id"
@@ -26,15 +26,21 @@ public final class AuthViewModel: ObservableObject {
         let logged = userDefaults.bool(forKey: kIsLoggedIn)
         let token = userDefaults.string(forKey: kUserToken) ?? ""
         let uid = userDefaults.string(forKey: kUserId) ?? ""
+        let email = userDefaults.string(forKey: kUserEmail)
         
         if logged && !token.isEmpty && !uid.isEmpty {
             self.isLoggedIn = true
             Task {
-                await fetchPerfilUsuario(userId: uid)
+                await fetchPerfilUsuario(userId: uid, email: email)
             }
         } else {
             self.isLoggedIn = false
+            self.currentUser = nil
         }
+    }
+    
+    public func clearError() {
+        self.errorMessage = nil
     }
     
     // ==========================================
@@ -42,30 +48,31 @@ public final class AuthViewModel: ObservableObject {
     // ==========================================
     @MainActor
     public func login(email: String, pass: String) async -> Bool {
-        guard !email.trimmingCharacters(in: .whitespaces).isEmpty,
-              !pass.isEmpty else {
+        let cleanEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !cleanEmail.isEmpty, !pass.isEmpty else {
             self.errorMessage = "Por favor, introduce tu correo y contraseña."
             return false
         }
         
         self.isLoading = true
         self.errorMessage = nil
+        self.successMessage = nil
         
         do {
-            let res = try await SupabaseService.shared.login(email: email.trimmingCharacters(in: .whitespaces), password: pass)
+            let res = try await SupabaseService.shared.login(email: cleanEmail, password: pass)
             userDefaults.set(true, forKey: kIsLoggedIn)
             userDefaults.set(res.user.id, forKey: kUserId)
-            userDefaults.set(res.user.email ?? email, forKey: kUserEmail)
+            userDefaults.set(res.user.email ?? cleanEmail, forKey: kUserEmail)
             userDefaults.set(res.access_token, forKey: kUserToken)
             userDefaults.set(res.refresh_token, forKey: kUserRefreshToken)
             
             self.isLoggedIn = true
-            await fetchPerfilUsuario(userId: res.user.id)
+            await fetchPerfilUsuario(userId: res.user.id, email: res.user.email ?? cleanEmail)
             self.isLoading = false
             return true
         } catch {
             self.isLoading = false
-            self.errorMessage = "Credenciales incorrectas o usuario no registrado."
+            self.errorMessage = error.localizedDescription
             return false
         }
     }
@@ -82,8 +89,8 @@ public final class AuthViewModel: ObservableObject {
         genero: String,
         pass: String
     ) async -> Bool {
-        let cleanEmail = email.trimmingCharacters(in: .whitespaces)
-        let cleanNombre = nombre.trimmingCharacters(in: .whitespaces)
+        let cleanEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
+        let cleanNombre = nombre.trimmingCharacters(in: .whitespacesAndNewlines)
         
         guard !cleanNombre.isEmpty else {
             self.errorMessage = "El nombre es obligatorio."
@@ -100,13 +107,14 @@ public final class AuthViewModel: ObservableObject {
         
         self.isLoading = true
         self.errorMessage = nil
+        self.successMessage = nil
         
         do {
             let res = try await SupabaseService.shared.signup(
                 nombre: cleanNombre,
-                apellidos: apellidos.trimmingCharacters(in: .whitespaces),
+                apellidos: apellidos.trimmingCharacters(in: .whitespacesAndNewlines),
                 email: cleanEmail,
-                telefono: telefono.trimmingCharacters(in: .whitespaces),
+                telefono: telefono.trimmingCharacters(in: .whitespacesAndNewlines),
                 genero: genero,
                 password: pass
             )
@@ -121,7 +129,7 @@ public final class AuthViewModel: ObservableObject {
             return true
         } catch {
             self.isLoading = false
-            self.errorMessage = "Error al registrar: \(error.localizedDescription)"
+            self.errorMessage = error.localizedDescription
             return false
         }
     }
@@ -131,24 +139,27 @@ public final class AuthViewModel: ObservableObject {
     // ==========================================
     @MainActor
     public func verifyOtp(email: String, token: String) async -> Bool {
+        let cleanEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
+        let cleanToken = token.trimmingCharacters(in: .whitespacesAndNewlines)
+        
         self.isLoading = true
         self.errorMessage = nil
         
         do {
-            let res = try await SupabaseService.shared.verifyEmailOtp(email: email.trimmingCharacters(in: .whitespaces), token: token.trimmingCharacters(in: .whitespaces))
+            let res = try await SupabaseService.shared.verifyEmailOtp(email: cleanEmail, token: cleanToken)
             userDefaults.set(true, forKey: kIsLoggedIn)
             userDefaults.set(res.user.id, forKey: kUserId)
-            userDefaults.set(res.user.email ?? email, forKey: kUserEmail)
+            userDefaults.set(res.user.email ?? cleanEmail, forKey: kUserEmail)
             userDefaults.set(res.access_token, forKey: kUserToken)
             userDefaults.set(res.refresh_token, forKey: kUserRefreshToken)
             
             self.isLoggedIn = true
-            await fetchPerfilUsuario(userId: res.user.id)
+            await fetchPerfilUsuario(userId: res.user.id, email: res.user.email ?? cleanEmail)
             self.isLoading = false
             return true
         } catch {
             self.isLoading = false
-            self.errorMessage = "Código incorrecto o caducado."
+            self.errorMessage = error.localizedDescription
             return false
         }
     }
@@ -158,27 +169,51 @@ public final class AuthViewModel: ObservableObject {
     // ==========================================
     @MainActor
     public func solicitarRecuperacionPassword(email: String) async -> Bool {
+        let cleanEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
         self.isLoading = true
         self.errorMessage = nil
         do {
-            try await SupabaseService.shared.solicitarResetPassword(email: email.trimmingCharacters(in: .whitespaces))
+            try await SupabaseService.shared.solicitarResetPassword(email: cleanEmail)
             self.isLoading = false
-            self.successMessage = "Se ha enviado un enlace/código de recuperación a tu correo."
+            self.successMessage = "Se ha enviado un código de recuperación a tu correo."
             return true
         } catch {
             self.isLoading = false
-            self.errorMessage = "No se pudo enviar el correo de recuperación."
+            self.errorMessage = error.localizedDescription
             return false
         }
     }
     
     // ==========================================
-    // 5. CARGAR PERFIL COMPLETO
+    // 5. CARGAR PERFIL COMPLETO DESDE BD
     // ==========================================
     @MainActor
-    public func fetchPerfilUsuario(userId: String) async {
+    public func fetchPerfilUsuario(userId: String, email: String? = nil) async {
         do {
-            if var perfil = try await SupabaseService.shared.fetchPerfilUsuario(userId: userId) {
+            var perfilOpt = try await SupabaseService.shared.fetchPerfilUsuario(userId: userId, fallbackEmail: email)
+            
+            if perfilOpt == nil {
+                // Si aún no está en la tabla pública de usuarios, inicializar con los datos básicos
+                perfilOpt = Usuario(
+                    id: userId,
+                    nombre: email?.components(separatedBy: "@").first?.capitalized ?? "Ciclista",
+                    email: email,
+                    genero: "Prefiero no decirlo",
+                    telefono: "",
+                    ciudad: "Pamplona",
+                    distancia_total_km: 0.0,
+                    km_hoy: 0.0,
+                    km_semana: 0.0,
+                    co2_total_evitado_kg: 0.0,
+                    kmcoins_balance: 0,
+                    racha_oro_semanal: 1,
+                    codigo_referido: "BI-\(userId.prefix(6).uppercased())",
+                    activo: true,
+                    notificaciones: true
+                )
+            }
+            
+            if var perfil = perfilOpt {
                 // Obtener saldo exacto desde vista_saldo_usuarios
                 if let saldo = try await SupabaseService.shared.fetchSaldoKmCoins(userId: userId) {
                     perfil.kmcoins_balance = saldo
@@ -189,12 +224,12 @@ public final class AuthViewModel: ObservableObject {
                 self.currentUser = perfil
             }
         } catch {
-            print("Error al cargar perfil de usuario: \(error)")
+            print("Error cargando perfil desde Supabase: \(error)")
         }
     }
     
     // ==========================================
-    // 6. CERRAR SESIÓN (LOGOUT)
+    // 6. CERRAR SESIÓN (LOGOUT LIMPIO)
     // ==========================================
     public func logout() {
         userDefaults.set(false, forKey: kIsLoggedIn)
@@ -210,13 +245,6 @@ public final class AuthViewModel: ObservableObject {
     
     public func cerrarSesion() {
         logout()
-    }
-    
-    @MainActor
-    public func entrarModoInvitado() {
-        self.currentUser = Usuario.mock
-        self.kmcoinsBalance = 140
-        self.isLoggedIn = true
     }
     
     @MainActor

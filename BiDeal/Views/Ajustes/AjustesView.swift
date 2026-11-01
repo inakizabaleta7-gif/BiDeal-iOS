@@ -325,6 +325,7 @@ public struct AjustesView: View {
             do {
                 try await SupabaseService.shared.actualizarPerfil(usuario: u)
                 homeVM.usuario = u
+                authVM.currentUser = u
                 editandoPerfil = false
             } catch {
                 print("Error guardando perfil: \(error)")

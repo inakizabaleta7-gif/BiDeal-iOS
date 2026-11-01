@@ -182,24 +182,7 @@ public struct LoginView: View {
                                     .foregroundColor(BiDealTheme.primary)
                             }
                         }
-                        .padding(.top, 4)
-                        
-                        // Botón de Acceso Rápido / Demo para pruebas inmediatas
-                        Button(action: {
-                            authVM.entrarModoInvitado()
-                        }) {
-                            HStack(spacing: 6) {
-                                Image(systemName: "sparkles")
-                                Text("Explorar como invitado")
-                            }
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
-                            .background(Color.secondary.opacity(0.1))
-                            .cornerRadius(12)
-                        }
-                        .padding(.top, 4)
+                        .padding(.top, 8)
                         
                         Spacer()
                     }

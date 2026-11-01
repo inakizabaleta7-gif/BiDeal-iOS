@@ -133,17 +133,30 @@ public final class ComerciosViewModel: ObservableObject {
         }
     }
     
-    public func canjear(recompensa: RecompensaUiModel, usuarioId: String) async -> RespuestaCanje {
+    public func canjear(recompensa: RecompensaUiModel, usuarioId: String, token: String? = nil) async -> RespuestaCanje {
         canjeando = true
         errorCanje = nil
-        let codigoCupon = "BIDEAL-\(Int.random(in: 1000...9999))-\(recompensa.id)"
-        self.codigoCanjeGenerado = codigoCupon
-        self.mostrarDialogoCanje = true
-        canjeando = false
-        return RespuestaCanje(
-            exito: true,
-            codigoCanje: codigoCupon,
-            mensaje: "¡Cupón generado con éxito! Muéstralo en \(recompensa.comercioNombre)."
-        )
+        do {
+            let res = try await SupabaseService.shared.canjearRecompensa(
+                userId: usuarioId,
+                descuentoId: recompensa.id,
+                comercioId: recompensa.comercioId,
+                precioKmCoins: recompensa.precio,
+                userToken: token
+            )
+            self.codigoCanjeGenerado = res.codigoCanje
+            self.mostrarDialogoCanje = res.exito
+            canjeando = false
+            return res
+        } catch {
+            canjeando = false
+            let err = error.localizedDescription
+            self.errorCanje = err
+            return RespuestaCanje(
+                exito: false,
+                codigoCanje: "",
+                mensaje: "No se pudo procesar el canje: \(err)"
+            )
+        }
     }
 }

@@ -56,6 +56,21 @@ public struct EstadisticasView: View {
             } message: {
                 Text("Llevas pedaleando con constancia este mes. ¡Cada día que eliges la bici sumas puntos para tu salud y para el comercio local!")
             }
+            .onAppear {
+                if let uid = authVM.currentUser?.id {
+                    Task {
+                        await estadisticasVM.cargarGrupo(userId: uid)
+                    }
+                }
+                estadisticasVM.actualizarConHealthKit(kmHoy: homeVM.kmHoy, kmSemana: HealthKitManager.shared.kmSemana)
+            }
+            .onChange(of: authVM.currentUser?.id) { newId in
+                if let uid = newId {
+                    Task {
+                        await estadisticasVM.cargarGrupo(userId: uid)
+                    }
+                }
+            }
         }
     }
     

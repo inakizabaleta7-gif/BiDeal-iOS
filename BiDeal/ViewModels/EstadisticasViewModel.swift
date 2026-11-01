@@ -44,6 +44,16 @@ public final class EstadisticasViewModel: ObservableObject {
         ]
     }
     
+    // Actualizar estadísticas con datos automáticos de Apple Health
+    public func actualizarConHealthKit(kmHoy: Double, kmSemana: Double) {
+        self.kmTotalSemana = max(kmSemana, kmHoy)
+        for i in 0..<diasSemana.count {
+            if diasSemana[i].esHoy {
+                diasSemana[i].km = kmHoy
+            }
+        }
+    }
+    
     // Cargar datos reales desde Supabase RPC
     public func cargarGrupo(userId: String) async {
         guard !userId.isEmpty else { return }

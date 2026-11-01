@@ -264,7 +264,8 @@ public struct DetalleComercioView: View {
         
         procesandoCanje = true
         Task {
-            let res = await comerciosVM.canjear(recompensa: recompensa, usuarioId: userId)
+            let token = UserDefaults.standard.string(forKey: "bideal_access_token")
+            let res = await comerciosVM.canjear(recompensa: recompensa, usuarioId: userId, token: token)
             procesandoCanje = false
             
             if res.exito {

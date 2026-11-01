@@ -104,6 +104,11 @@ public struct HomeView: View {
                             }
                             .padding(.top, 4)
                             
+                            // Tarjeta de Caducidad de KmCoins (si aplica)
+                            if let cad = homeVM.caducidadCoins, cad.cantidad > 0 {
+                                TarjetaCaducidadCoinsView(cantidad: cad.cantidad, diasRestantes: cad.dias)
+                            }
+                            
                             // Tarjeta de Mapa Real de Comercios de Pamplona
                             TarjetaMapaHome(
                                 region: $region,
@@ -524,5 +529,42 @@ struct MapaPantallaCompletaView: View {
                     .padding()
             }
         }
+    }
+}
+
+// Tarjeta de Aviso de Caducidad de Monedas (Idéntica a Android)
+struct TarjetaCaducidadCoinsView: View {
+    let cantidad: Int
+    let diasRestantes: Int
+    
+    var body: some View {
+        HStack(alignment: .center, spacing: 12) {
+            ZStack {
+                Circle()
+                    .fill(Color(red: 254/255, green: 226/255, blue: 226/255))
+                    .frame(width: 40, height: 40)
+                Image(systemName: "calendar.badge.exclamationmark")
+                    .foregroundColor(Color(red: 220/255, green: 38/255, blue: 38/255))
+                    .font(.system(size: 18))
+            }
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text("¡\(cantidad) KMC caducan en menos de \(diasRestantes) días!")
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundColor(Color(red: 153/255, green: 27/255, blue: 27/255))
+                Text("Úsalas en comercios asociados de Pamplona para no perderlas.")
+                    .font(.system(size: 12))
+                    .foregroundColor(Color(red: 185/255, green: 28/255, blue: 28/255))
+            }
+            
+            Spacer()
+        }
+        .padding(14)
+        .background(Color(red: 254/255, green: 242/255, blue: 242/255))
+        .cornerRadius(16)
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(Color(red: 248/255, green: 113/255, blue: 113/255).opacity(0.3), lineWidth: 1)
+        )
     }
 }

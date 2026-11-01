@@ -26,6 +26,7 @@ public final class HomeViewModel: ObservableObject {
     @Published public var co2Evitado: Double = 0.0
     @Published public var rachaSemanas: Int = 1
     @Published public var proximaCaducidad: String? = nil
+    @Published public var caducidadCoins: (cantidad: Int, dias: Int)? = nil
     @Published public var estaCargando: Bool = false
     
     public var distanciaTotalKm: Double { distanciaTotal }

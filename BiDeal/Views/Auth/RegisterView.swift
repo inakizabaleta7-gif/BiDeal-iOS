@@ -224,6 +224,14 @@ public struct RegisterView: View {
                         .cornerRadius(14)
                         .padding(.horizontal, 40)
                     
+                    if let err = authVM.errorMessage {
+                        Text(err)
+                            .font(.caption)
+                            .foregroundColor(.red)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 30)
+                    }
+                    
                     Button(action: {
                         Task {
                             let ok = await authVM.verifyOtp(email: email, token: otpCode)
