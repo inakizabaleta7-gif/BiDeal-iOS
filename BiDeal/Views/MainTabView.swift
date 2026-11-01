@@ -41,8 +41,8 @@ public struct MainTabView: View {
             await comerciosVM.cargarComerciosYDescuentos()
             await authVM.cargarSaldoKmCoins()
         }
-        .onChange(of: authVM.currentUser) { newUser in
-            if let user = newUser {
+        .onChange(of: authVM.currentUser?.id) { _ in
+            if let user = authVM.currentUser {
                 homeVM.actualizarConUsuario(user)
                 Task {
                     await estadisticasVM.cargarGrupo(userId: user.id)

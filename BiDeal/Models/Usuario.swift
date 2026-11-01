@@ -1,6 +1,6 @@
 import Foundation
 
-public struct Usuario: Identifiable, Codable {
+public struct Usuario: Identifiable, Codable, Equatable {
     public let id: String
     public var email: String?
     public var nombre: String?
@@ -9,6 +9,7 @@ public struct Usuario: Identifiable, Codable {
     public var telefono: String?
     public var ciudad: String?
     public var notificaciones: Bool?
+    public var activo: Bool?
     public var distancia_total_km: Double
     public var co2_total_evitado_kg: Double
     public var km_hoy: Double
@@ -29,6 +30,7 @@ public struct Usuario: Identifiable, Codable {
         case telefono
         case ciudad
         case notificaciones
+        case activo
         case distancia_total_km
         case co2_total_evitado_kg
         case km_hoy
@@ -50,6 +52,7 @@ public struct Usuario: Identifiable, Codable {
         telefono: String? = nil,
         ciudad: String? = "Pamplona",
         notificaciones: Bool? = true,
+        activo: Bool? = true,
         distancia_total_km: Double = 0.0,
         co2_total_evitado_kg: Double = 0.0,
         km_hoy: Double = 0.0,
@@ -69,6 +72,7 @@ public struct Usuario: Identifiable, Codable {
         self.telefono = telefono
         self.ciudad = ciudad
         self.notificaciones = notificaciones
+        self.activo = activo
         self.distancia_total_km = distancia_total_km
         self.co2_total_evitado_kg = co2_total_evitado_kg
         self.km_hoy = km_hoy
@@ -91,6 +95,7 @@ public struct Usuario: Identifiable, Codable {
         self.telefono = try container.decodeIfPresent(String.self, forKey: .telefono)
         self.ciudad = try container.decodeIfPresent(String.self, forKey: .ciudad)
         self.notificaciones = try container.decodeIfPresent(Bool.self, forKey: .notificaciones)
+        self.activo = try container.decodeIfPresent(Bool.self, forKey: .activo) ?? true
         
         self.distancia_total_km = (try? container.decodeIfPresent(Double.self, forKey: .distancia_total_km)) ?? 0.0
         self.co2_total_evitado_kg = (try? container.decodeIfPresent(Double.self, forKey: .co2_total_evitado_kg)) ?? 0.0
