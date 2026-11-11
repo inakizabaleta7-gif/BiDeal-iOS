@@ -30,6 +30,8 @@
 	<string>BiDeal sincroniza tus rutas ciclistas de Apple Health y Strava para sumarlas a tu cuenta de KmCoins y al ranking de la Liga Ciclista.</string>
 	<key>NSHealthUpdateUsageDescription</key>
 	<string>BiDeal puede registrar tus rutas ciclistas en Apple Health para completar tus anillos de actividad diaria.</string>
+	<key>NSMotionUsageDescription</key>
+	<string>BiDeal utiliza los sensores de movimiento para detectar cuándo te desplazas en bicicleta por Pamplona y pausar el registro si estás detenido o en transporte a motor.</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>

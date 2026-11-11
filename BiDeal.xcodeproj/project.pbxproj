@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C10000000000000000000026 /* ApiClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000026 /* ApiClient.swift */; };
+		C10000000000000000000027 /* QRScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000027 /* QRScannerView.swift */; };
 		C10000000000000000000000 /* BiDealApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000000 /* BiDealApp.swift */; };
 		C10000000000000000000001 /* BiDealTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000001 /* BiDealTheme.swift */; };
 		C10000000000000000000002 /* Usuario.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000002 /* Usuario.swift */; };
@@ -124,6 +126,8 @@
 				B100000000000000000000023 /* TutorialView.swift */,
 				B100000000000000000000024 /* ReferidosView.swift */,
 				B100000000000000000000025 /* EstadoRastreadorView.swift */,
+				B10000000000000000000026 /* ApiClient.swift */,
+				B10000000000000000000027 /* QRScannerView.swift */,
 				B100000000000000000000FF /* Info.plist */,
 				A10000000000000000000010 /* Products */,
 			);
@@ -237,6 +241,8 @@
 				C100000000000000000000023 /* TutorialView.swift in Sources */,
 				C100000000000000000000024 /* ReferidosView.swift in Sources */,
 				C100000000000000000000025 /* EstadoRastreadorView.swift in Sources */,
+				C10000000000000000000026 /* ApiClient.swift in Sources */,
+				C10000000000000000000027 /* QRScannerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

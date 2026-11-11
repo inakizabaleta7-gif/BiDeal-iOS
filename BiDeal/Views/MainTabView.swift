@@ -6,6 +6,7 @@ public struct MainTabView: View {
     @EnvironmentObject var estadisticasVM: EstadisticasViewModel
     @EnvironmentObject var comerciosVM: ComerciosViewModel
     @EnvironmentObject var authVM: AuthViewModel
+    @EnvironmentObject var locationManager: LocationManager
     
     public init() {}
     
@@ -23,15 +24,21 @@ public struct MainTabView: View {
                 }
                 .tag(1)
             
+            QRScannerView()
+                .tabItem {
+                    Label("Escanear QR", systemImage: "qrcode.viewfinder")
+                }
+                .tag(2)
+            
             EstadisticasView()
                 .tabItem {
                     Label("Estadísticas", systemImage: "chart.bar.fill")
                 }
-                .tag(2)
+                .tag(3)
         }
-        .tint(BiDealTheme.primary)
+        .tint(Color.bidealPrimary)
         .task {
-            // Sincronizar y cargar datos en vivo de Supabase al arrancar la app
+            // Sincronizar datos al arrancar
             if let user = authVM.currentUser {
                 homeVM.actualizarConUsuario(user)
                 await estadisticasVM.cargarGrupo(userId: user.id)
