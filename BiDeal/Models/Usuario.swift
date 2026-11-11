@@ -21,6 +21,11 @@ public struct Usuario: Identifiable, Codable, Equatable {
     public var kmcoins_balance: Int
     public var creado_en: String?
     
+    public var kmcoinsBalance: Int {
+        get { kmcoins_balance }
+        set { kmcoins_balance = newValue }
+    }
+    
     enum CodingKeys: String, CodingKey {
         case id
         case email

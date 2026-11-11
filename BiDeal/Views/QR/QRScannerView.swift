@@ -412,6 +412,7 @@ public struct QRScannerView: View {
                     
                     if let restante = canje.kmcoinsRestantes {
                         self.authVM.currentUser?.kmcoinsBalance = restante
+                        self.authVM.kmcoinsBalance = restante
                     }
                     
                     UINotificationFeedbackGenerator().notificationOccurred(.success)
@@ -734,7 +735,8 @@ struct ModalExitoCanjeView: View {
                 .padding(.horizontal, 24)
             
             // Cupón Destacado
-            if let cod = resultado.codigoCanje {
+            if !resultado.codigoCanje.isEmpty {
+                let cod = resultado.codigoCanje
                 VStack(spacing: 6) {
                     Text(cod)
                         .font(.system(size: 28, weight: .black, design: .monospaced))
