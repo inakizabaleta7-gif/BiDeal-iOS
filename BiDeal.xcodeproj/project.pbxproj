@@ -44,6 +44,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B10000000000000000000026 /* ApiClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Services/ApiClient.swift"; sourceTree = "<group>"; };
+		B10000000000000000000027 /* QRScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/QR/QRScannerView.swift"; sourceTree = "<group>"; };
 		B10000000000000000000000 /* BiDealApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "App/BiDealApp.swift"; sourceTree = "<group>"; };
 		B10000000000000000000001 /* BiDealTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "App/BiDealTheme.swift"; sourceTree = "<group>"; };
 		B10000000000000000000002 /* Usuario.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Models/Usuario.swift"; sourceTree = "<group>"; };

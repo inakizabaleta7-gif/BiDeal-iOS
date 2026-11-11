@@ -36,6 +36,12 @@ public final class SupabaseService {
     // Clave anónima pública segura para clientes móviles (Row Level Security activo)
     public let anonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind0Zndrd212Y3p6eXJnZGFta3BrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzNTg5NzYsImV4cCI6MjEwNTkzNDk3Nn0.zLGH9C2J8CfTC4JDzOBydZcl_3BKEW6ePOVTmK8O6Dg"
     
+    public var isAuthenticated: Bool {
+        let token = UserDefaults.standard.string(forKey: "supabase_access_token")
+            ?? UserDefaults.standard.string(forKey: "bideal_access_token")
+        return token != nil && !token!.isEmpty
+    }
+    
     private init() {}
     
     private var headers: [String: String] {
@@ -278,15 +284,21 @@ public final class SupabaseService {
                 email: perfil.email ?? "",
                 nombre: perfil.nombre ?? "Ciclista",
                 apellidos: perfil.apellidos,
+                genero: "Otro",
                 telefono: perfil.telefono,
-                genero: nil,
                 ciudad: perfil.ciudad ?? "Pamplona",
-                kmHoy: perfil.km_hoy ?? 0.0,
-                kmSemana: perfil.km_semana ?? 0.0,
-                distanciaTotalKm: perfil.distancia_total_km ?? 0.0,
-                co2TotalEvitadoKg: perfil.co2_total_evitado_kg ?? 0.0,
                 notificaciones: true,
-                createdAt: nil
+                activo: true,
+                distancia_total_km: perfil.distancia_total_km ?? 0.0,
+                co2_total_evitado_kg: perfil.co2_total_evitado_kg ?? 0.0,
+                km_hoy: perfil.km_hoy ?? 0.0,
+                km_semana: perfil.km_semana ?? 0.0,
+                racha_oro_semanal: perfil.racha_semanas ?? 0,
+                codigo_referido: nil,
+                referido_por: nil,
+                plataforma: "ios",
+                kmcoins_balance: perfil.kmcoins_disponibles ?? 0,
+                creado_en: nil
             )
         }
         
@@ -494,5 +506,59 @@ public final class SupabaseService {
             comercioId: comercioId,
             token: token
         )
+    }
+    
+    // ==========================================
+    // 6. LIGA CICLISTA (GRUPO)
+    // ==========================================
+    public func obtenerGrupoCiclista(userId: String) async throws -> RespuestaGrupoCiclista {
+        guard let url = URL(string: "\(supabaseURL)/rest/v1/rpc/obtener_grupo_usuario") else {
+            throw URLError(.badURL)
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue(anonKey, forHTTPHeaderField: "apikey")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        if let jwt = UserDefaults.standard.string(forKey: "supabase_access_token"), !jwt.isEmpty {
+            request.setValue("Bearer \(jwt)", forHTTPHeaderField: "Authorization")
+        }
+        
+        let bodyDict: [String: Any] = ["p_usuario_id": userId]
+        request.httpBody = try JSONSerialization.data(withJSONObject: bodyDict)
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
+            throw URLError(.badServerResponse)
+        }
+        
+        return try JSONDecoder().decode(RespuestaGrupoCiclista.self, from: data)
+    }
+    
+    public func unirseAGrupo(userId: String, codigo: String) async throws -> RespuestaUnionGrupo {
+        guard let url = URL(string: "\(supabaseURL)/rest/v1/rpc/unirse_a_grupo_ciclista") else {
+            throw URLError(.badURL)
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue(anonKey, forHTTPHeaderField: "apikey")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        if let jwt = UserDefaults.standard.string(forKey: "supabase_access_token"), !jwt.isEmpty {
+            request.setValue("Bearer \(jwt)", forHTTPHeaderField: "Authorization")
+        }
+        
+        let bodyDict: [String: Any] = [
+            "p_usuario_id": userId,
+            "p_codigo": codigo.trimmingCharacters(in: .whitespaces).uppercased()
+        ]
+        request.httpBody = try JSONSerialization.data(withJSONObject: bodyDict)
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
+            throw URLError(.badServerResponse)
+        }
+        
+        return try JSONDecoder().decode(RespuestaUnionGrupo.self, from: data)
     }
 }

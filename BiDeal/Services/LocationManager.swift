@@ -225,8 +225,8 @@ public final class LocationManager: NSObject, ObservableObject, CLLocationManage
             timestamp: Int64(loc.timestamp.timeIntervalSince1970 * 1000),
             latitud: loc.coordinate.latitude,
             longitud: loc.coordinate.longitude,
-            precisionMetros: loc.horizontalAccuracy > 0 ? loc.horizontalAccuracy : 5.0,
-            velocidadKmh: velKmh,
+            precision_metros: loc.horizontalAccuracy > 0 ? loc.horizontalAccuracy : 5.0,
+            velocidad_kmh: velKmh,
             actividad: actividadDetectada,
             confianza: confianzaActividad
         )
