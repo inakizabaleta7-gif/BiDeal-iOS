@@ -88,7 +88,6 @@ public final class ComerciosViewModel: ObservableObject {
     ]
     
     public init() {
-        self.recompensas = Self.fallbackPamplona
         Task {
             await cargarRecompensas()
         }
@@ -102,16 +101,16 @@ public final class ComerciosViewModel: ObservableObject {
         estaCargando = true
         do {
             let resultado = try await SupabaseService.shared.fetchComerciosYDescuentos()
-            var listaCombinada = Self.fallbackPamplona
-            for r in resultado {
-                if !listaCombinada.contains(where: { $0.id == r.id || $0.comercioNombre == r.comercioNombre }) {
-                    listaCombinada.append(r)
-                }
+            if !resultado.isEmpty {
+                self.recompensas = resultado
+            } else {
+                self.recompensas = Self.fallbackPamplona
             }
-            self.recompensas = listaCombinada
         } catch {
-            print("Error cargando comercios: \(error)")
-            cargarFallback()
+            print("Error cargando comercios desde base de datos: \(error)")
+            if self.recompensas.isEmpty {
+                self.recompensas = Self.fallbackPamplona
+            }
         }
         estaCargando = false
     }

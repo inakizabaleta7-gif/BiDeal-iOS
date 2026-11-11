@@ -24,7 +24,9 @@ public final class ApiClient {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue(getDeviceSessionId(), forHTTPHeaderField: "X-Device-Session-ID")
         
-        let jwt = token ?? UserDefaults.standard.string(forKey: "supabase_access_token")
+        let jwt = token
+            ?? UserDefaults.standard.string(forKey: "bideal_access_token")
+            ?? UserDefaults.standard.string(forKey: "supabase_access_token")
         if let jwt = jwt, !jwt.isEmpty {
             request.setValue("Bearer \(jwt)", forHTTPHeaderField: "Authorization")
         }
@@ -38,76 +40,99 @@ public final class ApiClient {
     // ==========================================
     // 1. ENVÍO DE RUTAS GPS (CÁLCULO SEGURO EN SERVIDOR)
     // ==========================================
-    public func enviarLoteRuta(puntos: [PuntoRuta], token: String? = nil) async throws -> RespuestaRuta {
-        guard let url = URL(string: "\(baseURL)/api/calcular_ruta") else {
-            throw URLError(.badURL)
+    public func enviarLoteRuta(puntos: [PuntoRuta], token: String? = nil) async -> Result<RespuestaRuta, Error> {
+        do {
+            guard let url = URL(string: "\(baseURL)/api/calcular_ruta") else {
+                return .failure(URLError(.badURL))
+            }
+            
+            let peticion = PeticionRuta(datosRuta: puntos)
+            let bodyData = try JSONEncoder().encode(peticion)
+            let request = prepareRequest(url: url, method: "POST", token: token, bodyData: bodyData)
+            
+            let (data, response) = try await URLSession.shared.data(for: request)
+            guard let httpResponse = response as? HTTPURLResponse else {
+                return .failure(URLError(.badServerResponse))
+            }
+            
+            guard (200...299).contains(httpResponse.statusCode) else {
+                let errorMsg = String(data: data, encoding: .utf8) ?? "Error \(httpResponse.statusCode) al calcular ruta"
+                return .failure(NSError(domain: "BiDealApi", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: errorMsg]))
+            }
+            
+            let decoded = try JSONDecoder().decode(RespuestaRuta.self, from: data)
+            return .success(decoded)
+        } catch {
+            return .failure(error)
         }
-        
-        let peticion = PeticionRuta(datosRuta: puntos)
-        let bodyData = try JSONEncoder().encode(peticion)
-        let request = prepareRequest(url: url, method: "POST", token: token, bodyData: bodyData)
-        
-        let (data, response) = try await URLSession.shared.data(for: request)
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw URLError(.badServerResponse)
-        }
-        
-        guard (200...299).contains(httpResponse.statusCode) else {
-            let errorMsg = String(data: data, encoding: .utf8) ?? "Error \(httpResponse.statusCode) al calcular ruta"
-            throw NSError(domain: "BiDealApi", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: errorMsg])
-        }
-        
-        return try JSONDecoder().decode(RespuestaRuta.self, from: data)
     }
     
     // ==========================================
     // 2. VALIDACIÓN ÓPTICA DE CÓDIGO QR EN MOSTRADOR
     // ==========================================
-    public func escanearQr(codigo: String, token: String? = nil) async throws -> RespuestaEscaneoQR {
-        guard let url = URL(string: "\(baseURL)/api/qr_escanear") else {
-            throw URLError(.badURL)
+    public func escanearQr(codigo: String, token: String? = nil) async -> Result<RespuestaEscaneoQR, Error> {
+        do {
+            guard let url = URL(string: "\(baseURL)/api/qr_escanear") else {
+                return .failure(URLError(.badURL))
+            }
+            
+            let peticion = PeticionEscaneoQR(codigo_qr: codigo)
+            let bodyData = try JSONEncoder().encode(peticion)
+            let request = prepareRequest(url: url, method: "POST", token: token, bodyData: bodyData)
+            
+            let (data, response) = try await URLSession.shared.data(for: request)
+            guard let httpResponse = response as? HTTPURLResponse else {
+                return .failure(URLError(.badServerResponse))
+            }
+            
+            guard (200...299).contains(httpResponse.statusCode) else {
+                let errorMsg = String(data: data, encoding: .utf8) ?? "Error \(httpResponse.statusCode) al escanear QR"
+                return .failure(NSError(domain: "BiDealApi", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: errorMsg]))
+            }
+            
+            let decoded = try JSONDecoder().decode(RespuestaEscaneoQR.self, from: data)
+            return .success(decoded)
+        } catch {
+            return .failure(error)
         }
-        
-        let peticion = PeticionEscaneoQR(codigo_qr: codigo)
-        let bodyData = try JSONEncoder().encode(peticion)
-        let request = prepareRequest(url: url, method: "POST", token: token, bodyData: bodyData)
-        
-        let (data, response) = try await URLSession.shared.data(for: request)
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw URLError(.badServerResponse)
-        }
-        
-        guard (200...299).contains(httpResponse.statusCode) else {
-            let errorMsg = String(data: data, encoding: .utf8) ?? "Error \(httpResponse.statusCode) al escanear QR"
-            throw NSError(domain: "BiDealApi", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: errorMsg])
-        }
-        
-        return try JSONDecoder().decode(RespuestaEscaneoQR.self, from: data)
     }
     
     // ==========================================
     // 3. CANJE ATÓMICO DE DESCUENTO
     // ==========================================
-    public func canjearDescuento(descuentoId: Int, comercioId: Int? = nil, codigoQr: String? = nil, token: String? = nil) async throws -> RespuestaCanje {
-        guard let url = URL(string: "\(baseURL)/api/canjear_descuento") else {
-            throw URLError(.badURL)
+    public func canjearDescuento(descuentoId: Int, comercioId: Int? = nil, codigoQr: String? = nil, token: String? = nil) async -> Result<RespuestaCanje, Error> {
+        do {
+            guard let url = URL(string: "\(baseURL)/api/canjear_descuento") else {
+                return .failure(URLError(.badURL))
+            }
+            
+            let peticion = PeticionCanje(descuento_id: descuentoId, comercio_id: comercioId, codigo_qr: codigoQr)
+            let bodyData = try JSONEncoder().encode(peticion)
+            let request = prepareRequest(url: url, method: "POST", token: token, bodyData: bodyData)
+            
+            let (data, response) = try await URLSession.shared.data(for: request)
+            guard let httpResponse = response as? HTTPURLResponse else {
+                return .failure(URLError(.badServerResponse))
+            }
+            
+            guard (200...299).contains(httpResponse.statusCode) else {
+                let errorMsg = String(data: data, encoding: .utf8) ?? "Error \(httpResponse.statusCode) al canjear descuento"
+                return .failure(NSError(domain: "BiDealApi", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: errorMsg]))
+            }
+            
+            let decoded = try JSONDecoder().decode(RespuestaCanje.self, from: data)
+            return .success(decoded)
+        } catch {
+            return .failure(error)
         }
-        
-        let peticion = PeticionCanje(descuento_id: descuentoId, comercio_id: comercioId, codigo_qr: codigoQr)
-        let bodyData = try JSONEncoder().encode(peticion)
-        let request = prepareRequest(url: url, method: "POST", token: token, bodyData: bodyData)
-        
-        let (data, response) = try await URLSession.shared.data(for: request)
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw URLError(.badServerResponse)
+    }
+    
+    public func canjearDescuentoThrowing(descuentoId: Int, comercioId: Int? = nil, codigoQr: String? = nil, token: String? = nil) async throws -> RespuestaCanje {
+        let res = await canjearDescuento(descuentoId: descuentoId, comercioId: comercioId, codigoQr: codigoQr, token: token)
+        switch res {
+        case .success(let val): return val
+        case .failure(let err): throw err
         }
-        
-        guard (200...299).contains(httpResponse.statusCode) else {
-            let errorMsg = String(data: data, encoding: .utf8) ?? "Error \(httpResponse.statusCode) al canjear descuento"
-            throw NSError(domain: "BiDealApi", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: errorMsg])
-        }
-        
-        return try JSONDecoder().decode(RespuestaCanje.self, from: data)
     }
     
     // ==========================================
@@ -158,10 +183,6 @@ public final class ApiClient {
             throw NSError(domain: "BiDealApi", code: 400, userInfo: [NSLocalizedDescriptionKey: errorMsg])
         }
         
-        if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-           let msg = json["mensaje"] as? String {
-            return msg
-        }
-        return "¡Código canjeado con éxito!"
+        return "Código de referido aplicado con éxito"
     }
 }

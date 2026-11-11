@@ -123,24 +123,6 @@ public struct PeticionCanje: Codable {
     }
 }
 
-public struct RespuestaCanje: Codable {
-    public let exito: Bool
-    public let codigoCanje: String
-    public let mensaje: String
-    
-    enum CodingKeys: String, CodingKey {
-        case exito
-        case codigoCanje = "codigo_canje"
-        case mensaje
-    }
-    
-    public init(exito: Bool, codigoCanje: String, mensaje: String) {
-        self.exito = exito
-        self.codigoCanje = codigoCanje
-        self.mensaje = mensaje
-    }
-}
-
 // ==========================================
 // 3. MODELO DE PERFIL Y REFERIDOS
 // ==========================================

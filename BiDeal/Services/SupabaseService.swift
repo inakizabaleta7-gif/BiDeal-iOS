@@ -477,4 +477,22 @@ public final class SupabaseService {
         
         return items
     }
+    
+    // ==========================================
+    // 5. CANJEAR RECOMPENSA (VÍA BACKEND ATÓMICO VERCEL)
+    // ==========================================
+    public func canjearRecompensa(
+        userId: String,
+        descuentoId: Int,
+        comercioId: Int?,
+        precioKmCoins: Int,
+        userToken: String? = nil
+    ) async throws -> RespuestaCanje {
+        let token = userToken ?? UserDefaults.standard.string(forKey: "supabase_access_token")
+        return try await ApiClient.shared.canjearDescuentoThrowing(
+            descuentoId: descuentoId,
+            comercioId: comercioId,
+            token: token
+        )
+    }
 }

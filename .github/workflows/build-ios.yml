@@ -20,6 +20,7 @@ jobs:
 
       - name: Compilar y Archivar Proyecto iOS
         run: |
+          set -o pipefail
           xcodebuild clean archive \
             -project BiDeal.xcodeproj \
             -scheme BiDeal \
@@ -28,7 +29,17 @@ jobs:
             -archivePath build/BiDeal.xcarchive \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGN_IDENTITY=""
+            CODE_SIGN_IDENTITY="" \
+            2>&1 | tee xcodebuild.log
+
+      - name: Inspeccionar Errores de Compilación (si falló)
+        if: failure()
+        run: |
+          if [ -f xcodebuild.log ]; then
+            echo "=== ERRORES DE COMPILACIÓN DETECTADOS ==="
+            grep -E "error: " xcodebuild.log | head -n 40
+            echo "========================================="
+          fi
 
       - name: Empaquetar a Archivo IPA
         run: |

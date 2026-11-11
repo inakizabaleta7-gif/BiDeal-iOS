@@ -73,14 +73,54 @@ public struct RecompensaUiModel: Identifiable, Codable {
     }
 }
 
-public struct RespuestaCanje: Codable {
+// Definición canónica y unificada de RespuestaCanje (consumida por ApiClient, SupabaseService y DetalleComercioView)
+public struct RespuestaCanje: Identifiable, Codable {
+    public var id: String { codigoCanje }
     public let exito: Bool
     public let codigoCanje: String
     public let mensaje: String
+    public let kmcoinsRestantes: Int?
     
-    public init(exito: Bool, codigoCanje: String, mensaje: String) {
+    enum CodingKeys: String, CodingKey {
+        case exito
+        case status
+        case codigoCupon = "codigo_cupon"
+        case codigoCanjeAlt = "codigo_canje"
+        case mensaje
+        case saldoRestante = "saldo_restante"
+        case kmcoinsRestantesAlt = "kmcoins_restantes"
+    }
+    
+    public init(exito: Bool, codigoCanje: String, mensaje: String, kmcoinsRestantes: Int? = nil) {
         self.exito = exito
         self.codigoCanje = codigoCanje
         self.mensaje = mensaje
+        self.kmcoinsRestantes = kmcoinsRestantes
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        let statusStr = try? container.decodeIfPresent(String.self, forKey: .status)
+        let exitoBool = try? container.decodeIfPresent(Bool.self, forKey: .exito)
+        self.exito = exitoBool ?? (statusStr == "success" || statusStr == "ok")
+        
+        let cupon = (try? container.decodeIfPresent(String.self, forKey: .codigoCupon))
+            ?? (try? container.decodeIfPresent(String.self, forKey: .codigoCanjeAlt))
+            ?? ""
+        self.codigoCanje = cupon
+        
+        self.mensaje = (try? container.decodeIfPresent(String.self, forKey: .mensaje)) ?? "Canje realizado con éxito"
+        
+        self.kmcoinsRestantes = (try? container.decodeIfPresent(Int.self, forKey: .saldoRestante))
+            ?? (try? container.decodeIfPresent(Int.self, forKey: .kmcoinsRestantesAlt))
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(exito, forKey: .exito)
+        try container.encode(codigoCanje, forKey: .codigoCupon)
+        try container.encode(mensaje, forKey: .mensaje)
+        try container.encodeIfPresent(kmcoinsRestantes, forKey: .saldoRestante)
     }
 }
