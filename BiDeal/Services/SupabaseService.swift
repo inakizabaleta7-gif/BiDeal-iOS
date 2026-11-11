@@ -561,4 +561,61 @@ public final class SupabaseService {
         
         return try JSONDecoder().decode(RespuestaUnionGrupo.self, from: data)
     }
+    
+    // ==========================================
+    // 7. ACTUALIZACIÓN DE PERFIL Y SALUD
+    // ==========================================
+    public func actualizarPerfil(usuario: Usuario) async throws {
+        guard let url = URL(string: "\(supabaseURL)/rest/v1/usuarios?id=eq.\(usuario.id)") else {
+            throw URLError(.badURL)
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "PATCH"
+        headers.forEach { request.setValue($1, forHTTPHeaderField: $0) }
+        request.setValue("return=minimal", forHTTPHeaderField: "Prefer")
+        
+        var dict: [String: Any] = [
+            "plataforma": usuario.plataforma ?? "ios"
+        ]
+        if let nombre = usuario.nombre { dict["nombre"] = nombre }
+        if let apellidos = usuario.apellidos { dict["apellidos"] = apellidos }
+        if let telefono = usuario.telefono { dict["telefono"] = telefono }
+        if let genero = usuario.genero { dict["genero"] = genero }
+        if let ciudad = usuario.ciudad { dict["ciudad"] = ciudad }
+        if let notif = usuario.notificaciones { dict["notificaciones"] = notif }
+        
+        request.httpBody = try JSONSerialization.data(withJSONObject: dict)
+        
+        let (_, response) = try await URLSession.shared.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
+            throw URLError(.badServerResponse)
+        }
+    }
+    
+    public func sincronizarKmSalud(userId: String, kmHoy: Double, kmSemana: Double, kmTotales: Double) async throws {
+        guard let url = URL(string: "\(supabaseURL)/rest/v1/usuarios?id=eq.\(userId)") else {
+            throw URLError(.badURL)
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "PATCH"
+        headers.forEach { request.setValue($1, forHTTPHeaderField: $0) }
+        request.setValue("return=minimal", forHTTPHeaderField: "Prefer")
+        
+        let dict: [String: Any] = [
+            "km_hoy": kmHoy,
+            "km_semana": kmSemana,
+            "distancia_total_km": kmTotales,
+            "co2_total_evitado_kg": kmTotales * 0.165,
+            "plataforma": "ios"
+        ]
+        
+        request.httpBody = try JSONSerialization.data(withJSONObject: dict)
+        
+        let (_, response) = try await URLSession.shared.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
+            throw URLError(.badServerResponse)
+        }
+    }
 }

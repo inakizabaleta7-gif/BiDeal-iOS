@@ -48,6 +48,13 @@ public struct RespuestaRuta: Codable {
     public let saldo_actual_kmcoins: Int?
     public let mensaje: String?
     
+    // Compatibilidad y accesores tipados camelCase
+    public var distanciaSumadaKm: Double { distancia_sumada_km }
+    public var kmcoinsGanadas: Int { kmcoins_ganadas }
+    public var saldoActualKmcoins: Int { saldo_actual_kmcoins ?? 0 }
+    public var velocidadMediaKmH: Double? { velocidad_media_kmh }
+    public var tiempoSegundos: Int? { tiempo_segundos }
+    
     public init(
         distancia_sumada_km: Double,
         kmcoins_ganadas: Int,
@@ -77,37 +84,91 @@ public struct PeticionEscaneoQR: Codable {
     }
 }
 
-public struct RespuestaEscaneoQR: Codable {
-    public let valido: Bool
-    public let comercio_id: Int?
-    public let nombre_comercio: String?
-    public let direccion: String?
+public struct ComercioDto: Codable, Identifiable {
+    public let id: Int
+    public let nombre: String
     public let categoria: String?
-    public let descuento_id: Int?
-    public let titulo_descuento: String?
-    public let precio_kmcoins: Int?
-    public let mensaje: String?
+    public let direccion: String?
+    public let logoUrl: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case id, nombre, categoria, direccion
+        case logoUrl = "logo_url"
+    }
+    
+    public init(id: Int, nombre: String, categoria: String? = nil, direccion: String? = nil, logoUrl: String? = nil) {
+        self.id = id
+        self.nombre = nombre
+        self.categoria = categoria
+        self.direccion = direccion
+        self.logoUrl = logoUrl
+    }
+}
+
+public struct DescuentoDto: Codable, Identifiable {
+    public let id: Int
+    public let titulo: String
+    public let descripcion: String
+    public let precioKmcoins: Int
+    public let cooldownHoras: Int?
+    public let enCooldown: Bool?
+    public let disponibleEn: String?
+    public let puedePagarlo: Bool?
+    
+    enum CodingKeys: String, CodingKey {
+        case id, titulo, descripcion
+        case precioKmcoins = "precio_kmcoins"
+        case cooldownHoras = "cooldown_horas"
+        case enCooldown = "en_cooldown"
+        case disponibleEn = "disponible_en"
+        case puedePagarlo = "puede_pagarlo"
+    }
     
     public init(
-        valido: Bool,
-        comercio_id: Int? = nil,
-        nombre_comercio: String? = nil,
-        direccion: String? = nil,
-        categoria: String? = nil,
-        descuento_id: Int? = nil,
-        titulo_descuento: String? = nil,
-        precio_kmcoins: Int? = nil,
-        mensaje: String? = nil
+        id: Int,
+        titulo: String,
+        descripcion: String = "",
+        precioKmcoins: Int,
+        cooldownHoras: Int? = 0,
+        enCooldown: Bool? = false,
+        disponibleEn: String? = nil,
+        puedePagarlo: Bool? = true
     ) {
-        self.valido = valido
-        self.comercio_id = comercio_id
-        self.nombre_comercio = nombre_comercio
-        self.direccion = direccion
-        self.categoria = categoria
-        self.descuento_id = descuento_id
-        self.titulo_descuento = titulo_descuento
-        self.precio_kmcoins = precio_kmcoins
+        self.id = id
+        self.titulo = titulo
+        self.descripcion = descripcion
+        self.precioKmcoins = precioKmcoins
+        self.cooldownHoras = cooldownHoras
+        self.enCooldown = enCooldown
+        self.disponibleEn = disponibleEn
+        self.puedePagarlo = puedePagarlo
+    }
+}
+
+public struct RespuestaEscaneoQR: Codable {
+    public let status: String?
+    public let mensaje: String?
+    public let comercio: ComercioDto
+    public let saldoUsuarioKmcoins: Int
+    public let descuentos: [DescuentoDto]
+    
+    enum CodingKeys: String, CodingKey {
+        case status, mensaje, comercio, descuentos
+        case saldoUsuarioKmcoins = "saldo_usuario_kmcoins"
+    }
+    
+    public init(
+        status: String? = "ok",
+        mensaje: String? = nil,
+        comercio: ComercioDto,
+        saldoUsuarioKmcoins: Int,
+        descuentos: [DescuentoDto]
+    ) {
+        self.status = status
         self.mensaje = mensaje
+        self.comercio = comercio
+        self.saldoUsuarioKmcoins = saldoUsuarioKmcoins
+        self.descuentos = descuentos
     }
 }
 
