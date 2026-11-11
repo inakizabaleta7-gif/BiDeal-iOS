@@ -38,6 +38,9 @@ jobs:
           if [ -f xcodebuild.log ]; then
             echo "=== ERRORES DE COMPILACIÓN DETECTADOS ==="
             grep -E "error: " xcodebuild.log | head -n 40
+            while IFS= read -r line; do
+              echo "::error title=Xcode Compilation::$line"
+            done < <(grep -E "error: " xcodebuild.log | head -n 20)
             echo "========================================="
           fi
 
